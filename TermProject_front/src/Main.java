@@ -1,15 +1,27 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.*;
 
 class MyFrame extends JFrame {
 	JMenu menu;
+	
+	//ë©”ë‰´ë°” ë³€ìˆ˜
 	JMenuBar menuBar;
 	JMenuItem fPathItem;
 	JMenuItem fBuildItem;
 	JMenuItem ExitItem;
+	
+	//ë§µ ì´ë¯¸ì§€ ë³€ìˆ˜
+	JLabel label_img;
+	
+	//ë§ˆìš°ìŠ¤ ë° í‚¤ë³´ë“œ input ë³€ìˆ˜
+	Position myPos = new Position(0, 0); // í˜„ì¬ ì‚¬ìš©ì ìœ„ì¹˜
+	Position targetPos = new Position(0, 0); // ë„ì°©í•  ì¥ì†Œ(ë…¸ë“œì—¬ì•¼í•¨) ìœ„ì¹˜
 	
 	MyFrame() {
 		//setLayout(null);
@@ -22,7 +34,7 @@ class MyFrame extends JFrame {
 		JTextField textField = new JTextField(20);
 		JButton button = new JButton("send");
 		
-		JLabel label_img = new JLabel("campus");
+		label_img = new JLabel("campus");
 		label_img.setIcon(new ImageIcon("campus.jpg"));
 		
 		panel.add(label);
@@ -39,8 +51,9 @@ class MyFrame extends JFrame {
 		setSize(800,600);
 		setVisible(true);
 	}
-	
-	private void CreateMenu() { //¸Ş´º¹Ù ¸¸µé±â [1 ¸Ş´º_find path]: ÇöÀç À§Ä¡(°¡Àå °¡±î¿î ³ëµå) --> µµÂø À§Ä¡ ³ëµå  [2 ¸Ş´º_find building]:ÇöÀç À§Ä¡(°¡Àå °¡±î¿î ³ëµå) --> µµÂø °Ç¹° [3 ¸Ş´º_EXIT]
+
+	//ë©”ë‰´ë°” ë§Œë“¤ê¸°
+	private void CreateMenu() { //[1 ë©”ë‰´_find path]: í˜„ì¬ ìœ„ì¹˜(ê°€ì¥ ê°€ê¹Œìš´ ë…¸ë“œ) --> ë„ì°© ìœ„ì¹˜ ë…¸ë“œ  [2 ë©”ë‰´_find building]:í˜„ì¬ ìœ„ì¹˜(ê°€ì¥ ê°€ê¹Œìš´ ë…¸ë“œ) --> ë„ì°© ê±´ë¬¼ [3 ë©”ë‰´_EXIT]
 		menuBar = new JMenuBar();
 		menu = new JMenu("Menu");
 		menuBar.add(menu);
@@ -60,28 +73,78 @@ class MyFrame extends JFrame {
 		setJMenuBar(menuBar);
 	}
 	
+	//ë§ˆìš°ìŠ¤ë¡œ Position ì…ë ¥ ë°›ëŠ” í•¨ìˆ˜
+	class MouseMotionAdapter implements MouseListener, MouseMotionListener{
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(myPos.x == 0) { //ë‚´ ìœ„ì¹˜ë¥¼ ë°›ì€ ì ì´ ì—†ìœ¼ë©´ ë§ˆìš°ìŠ¤ ì…ë ¥ì€ myPos
+				myPos.x = e.getX();
+				myPos.y = e.getY();
+			}
+			else { //ë‚´ ìœ„ì¹˜ ì…ë ¥ ë°›ì•˜ì—ˆìœ¼ë©´ ë§ˆìš°ìŠ¤ ì…ë ¥ì€ targetPos
+				targetPos.x = e.getX();
+				targetPos.y = e.getY();
+			}
+			//System.out.println(e.getX());
+		}
+		@Override
+	    public void mouseEntered(MouseEvent e) {
+	    }
+		@Override
+	    public void mousePressed(MouseEvent e) {      
+	    }
+		@Override
+	    public void mouseReleased(MouseEvent e) {      
+	    }
+		@Override
+		public void mouseDragged(MouseEvent e) {    
+	    }
+		@Override
+		public void mouseExited(MouseEvent e) {      
+	    }
+		@Override
+        public void mouseMoved(MouseEvent e) {
+        }
+	}
+	/*3ê°€ì§€ ë©”ë‰´ ê°ê° function ìˆ˜í–‰
+	1. Exit ë©”ë‰´: ë‚˜ê°€ê¸°
+	2. Find Path: ë§ˆìš°ìŠ¤ ì…ë ¥ 2ë²ˆ(í˜„ìœ„ì¹˜, íƒ€ê²Ÿ ìœ„ì¹˜) í›„ path ì°¾ê¸°
+	3. Find Building: ë§ˆìš°ìŠ¤ ì…ë ¥ 1ë²ˆ(í˜„ìœ„ì¹˜), í‚¤ë³´ë“œ ì…ë ¥ 1ë²ˆ(ì˜ë„) í›„ path ì°¾ê¸°
+	*/
 	class TestListenr implements ActionListener{
 		public void actionPerformed(ActionEvent event) {
-			if(event.getSource() == ExitItem) { //[3 ¸Ş´º_EXIT] Å¬¸¯ ½Ã ²ô±â
+			if(event.getSource() == ExitItem) {
 				System.exit(1);
 			}
 			else if(event.getSource() == fPathItem) {
-				
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				//TODO: targetPosëŠ” ê°€ì¥ ê°€ê¹Œìš´ ë…¸ë“œë¡œ ë³€ê²½
+				FindPath();
 			}
 			else if(event.getSource() == fBuildItem) {
-				
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				FindBuilding();
 			}
+		}
+		void FindPath() {
+			//TODO : 1)í˜„ìœ„ì¹˜, íƒ€ê²Ÿìœ„ì¹˜ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ ë…¸ë“œ ì°¾ê¸° 2)findShortestPath()
+		}
+		
+		void FindBuilding() {
+			//TODO : 1)í˜„ìœ„ì¹˜ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ ë…¸ë“œ ì°¾ê¸° 2)findShortestPath()
 		}
 	}
 	
-	// PathFinder ÀÌ¿ë
-	// ÀÚ½ÅÀÇ À§Ä¡¸¦ ±¸ÇÒ ¶§´Â findClosestVertex·Î Á¦ÀÏ °¡±î¿î Vertex
-	// Mouse input targetÀº °Ç¹°¸¸ ÁöÁ¤ °¡´É, °Ç¹° Á¤º¸´Â getAllBuildingInfosÀ¸·Î °¡Á®¿È
-	// Mouse input targetÀ¸·Î ±æÃ£±â : findShortestPath(Vertex source, Building target)
-	// Category input targetÀ¸·Î ±æÃ£±â : findShortestPath(Vertex source, String category)
+	// PathFinder ì´ìš©
+	// ìì‹ ì˜ ìœ„ì¹˜ë¥¼ êµ¬í•  ë•ŒëŠ” findClosestVertexë¡œ ì œì¼ ê°€ê¹Œìš´ Vertex
+	// Mouse input targetì€ ê±´ë¬¼ë§Œ ì§€ì • ê°€ëŠ¥, ê±´ë¬¼ ì •ë³´ëŠ” getAllBuildingInfosìœ¼ë¡œ ê°€ì ¸ì˜´
+	// Mouse input targetìœ¼ë¡œ ê¸¸ì°¾ê¸° : findShortestPath(Vertex source, Building target)
+	// Category input targetìœ¼ë¡œ ê¸¸ì°¾ê¸° : findShortestPath(Vertex source, String category)
 	// ----------------------------------------------------------------------------------------
-	// È­¸é¿¡ + ¹öÆ° ´­·¯¼­ »ç¿ëÀÚ ÀÔ·Â Ã¢ ¶ç¿ì±â
-	// »ç¿ëÀÚ°¡ submit ÇÏ¸é Database class¿¡ setRoom(String rName, String category, Building building) »ç¿ë
+	// í™”ë©´ì— + ë²„íŠ¼ ëˆŒëŸ¬ì„œ ì‚¬ìš©ì ì…ë ¥ ì°½ ë„ìš°ê¸°
+	// ì‚¬ìš©ìê°€ submit í•˜ë©´ Database classì— setRoom(String rName, String category, Building building) ì‚¬ìš©
 }
 
 public class Main {
