@@ -4,8 +4,17 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-class MyFrame extends JFrame {	
+class MyFrame extends JFrame {
+	JMenu menu;
+	JMenuBar menuBar;
+	JMenuItem fPathItem;
+	JMenuItem fBuildItem;
+	JMenuItem ExitItem;
+	
 	MyFrame() {
+		//setLayout(null);
+		CreateMenu();
+		
 		setTitle("Campus Map");
 		
 		JPanel panel = new JPanel();
@@ -26,8 +35,43 @@ class MyFrame extends JFrame {
 		
 		pack(); // to combine
 		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800,600);
 		setVisible(true);
+	}
+	
+	private void CreateMenu() { //메뉴바 만들기 [1 메뉴_find path]: 현재 위치(가장 가까운 노드) --> 도착 위치 노드  [2 메뉴_find building]:현재 위치(가장 가까운 노드) --> 도착 건물 [3 메뉴_EXIT]
+		menuBar = new JMenuBar();
+		menu = new JMenu("Menu");
+		menuBar.add(menu);
+		fPathItem = new JMenuItem("Find Path");
+		fBuildItem = new JMenuItem("Find Building");
+		ExitItem = new JMenuItem("EXIT");
+		menu.add(fPathItem);
+		menu.add(fBuildItem);
+		menu.add(ExitItem);
+		menuBar.setBorder(BorderFactory.createLineBorder(Color.gray));
+		
+		TestListenr listener = new TestListenr();
+		ExitItem.addActionListener(listener);
+		fPathItem.addActionListener(listener);
+		fBuildItem.addActionListener(listener);
+		
+		setJMenuBar(menuBar);
+	}
+	
+	class TestListenr implements ActionListener{
+		public void actionPerformed(ActionEvent event) {
+			if(event.getSource() == ExitItem) { //[3 메뉴_EXIT] 클릭 시 끄기
+				System.exit(1);
+			}
+			else if(event.getSource() == fPathItem) {
+				
+			}
+			else if(event.getSource() == fBuildItem) {
+				
+			}
+		}
 	}
 	
 	// PathFinder 이용
