@@ -15,17 +15,23 @@ public class WritingThread extends Thread { // 서버로 메세지 보내는 Thread
 		this.socket = socket; 
 	}
 	
-	public void run() {
+	public void run() { // GUI writes.
 		try {
 			// OutputStream - 클라이언트에서 Server로 메세지 발송 
-            		// socket의 OutputStream 정보를 OutputStream out에 넣은 뒤
+            // socket의 OutputStream 정보를 OutputStream out에 넣은 뒤
 			OutputStream out = socket.getOutputStream();
-            		// PrintWriter에 위 OutputStream을 담아 사용
+            
+			// PrintWriter에 위 OutputStream을 담아 사용
 			PrintWriter writer = new PrintWriter(out, true);
 			
-			while(true) { // 무한반복
-				writer.println(scanner.nextLine()); // FROM MOUSE
+			writer.println(scanner.nextLine()); // insertNew or PathFind
+			for(int i = 0; i<3; i++) {
+				writer.println(scanner.nextLine());
 			}
+			
+			//while(true) { // Get information form GUI and send to server in this while loop until user click Quit or Fin 한번 에 입력을 다 받아서 한번에 정보를 보내줘야 할듯.
+				// writer.println(mouseEvents()....); // FROM MOUSE or KEYBOARD input
+			//}
 			
 		} catch (Exception e) {
 			e.printStackTrace(); // 예외처리

@@ -18,7 +18,7 @@ public class DB_client {
 			
             // 서버에서 보낸 메세지 읽는 Thread
 			listen_thread t1 = new listen_thread(socket);
-			WritingThread t2 = new WritingThread(socket); // 서버로 메세지 보내는 Thread
+			WritingThread t2 = new WritingThread(socket); // GUI Thread start.
 
 			t1.start(); // ListeningThread Start
 			t2.start(); // WritingThread Start

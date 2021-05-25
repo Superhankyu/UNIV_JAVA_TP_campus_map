@@ -22,10 +22,20 @@ public class listen_thread extends Thread { // 서버에서 보낸 메세지 읽는 Thread
           		// BufferedReader에 위 InputStream을 담아 사용
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			
-			while(true) { // 무한반복
+			System.out.println(reader.readLine()); 
+			String WhatToDo = reader.readLine();
+			
+			if(WhatToDo.equals("insert")) { // if user wants insert new information.
+				for(int i = 0; i<3; i++) {
+					System.out.println(reader.readLine()); // 3 questions at Server.java run();
+				}	
 				System.out.println(reader.readLine());
 			}
-			
+			else if(WhatToDo.equals("PathFind")) { // if user wants path
+				// TODO GUI With Server.java run();
+				
+			}
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
