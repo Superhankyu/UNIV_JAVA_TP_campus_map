@@ -17,6 +17,11 @@ public class PathFinder {
 	public Vertex findClosestVertex(int x, int y) {
 		return new Vertex("test", new Position(x, y));
 	}
+
+	// When finding user position
+	public Building findClosestBuilding(int x, int y) {
+		return null;
+	}
 	
 	// When finding target position on click, target to building
 	public List<Vertex> findShortestPath(Vertex source, Building target) {
