@@ -37,7 +37,7 @@ class MyFrame extends JFrame {
 		label_img = new JLabel("campus");
 		ImageIcon icon = new ImageIcon("자과캠.jpg");
 		Image img = icon.getImage();
-		Image changeimg = img.getScaledInstance(600, 500, Image.SCALE_SMOOTH);
+		Image changeimg = img.getScaledInstance(600, 480, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon = new ImageIcon(changeimg);
 		label_img.setIcon(changeIcon);
 		//label_img.setIcon(new ImageIcon("campus.jpg"));
