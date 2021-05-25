@@ -2,6 +2,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PathFinder {
+	private List<Vertex> vertexs;
+	private List<Building> buildings;
+	private List<Room> rooms;
+
+	public PathFinder(){
+		// vertex read
+		// add edges
+		// add buildings
+		// add rooms
+	}
+
 	// When finding user position
 	public Vertex findClosestVertex(int x, int y) {
 		return new Vertex("test", new Position(x, y));
@@ -25,7 +36,6 @@ public class PathFinder {
 	
 	// Set buildings info when initilizing
 	public List<Building> getAllBuildingInfos(){
-		List<Building> buildings = new ArrayList<>();
 		return buildings;
 	}
 }
