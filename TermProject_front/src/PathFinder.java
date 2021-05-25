@@ -2,18 +2,18 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PathFinder {
-	// 자신 위치 마우스로 찾을 때,
+	// When finding user position
 	public Vertex findClosestVertex(int x, int y) {
 		return new Vertex("test", new Position(x, y));
 	}
 	
-	// target을 마우스로 찾을 때, 건물 기준으로
+	// When finding target position on click, target to building
 	public List<Vertex> findShortestPath(Vertex source, Building target) {
 		List<Vertex> path = new ArrayList<>();
 		return path;
 	}
 	
-	// target을 category로 찾을 때,
+	// When finding target position with category
 	public List<Vertex> findShortestPath(Vertex source, String category) {
 		List<Vertex> path = new ArrayList<>();
 		return path;
@@ -23,7 +23,7 @@ public class PathFinder {
 		return new Room();
 	}
 	
-	// 처음에 건물 정보를 전부 가져와서 set 해둔다.
+	// Set buildings info when initilizing
 	public List<Building> getAllBuildingInfos(){
 		List<Building> buildings = new ArrayList<>();
 		return buildings;
