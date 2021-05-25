@@ -1,6 +1,6 @@
 dormShin
 dormShin2
-dield
+field
 biotechnology61
 dormIn
 dormUi
@@ -11,6 +11,7 @@ engineeringBuilding2-27
 engineeringBuilding2-26
 engineeringBuilding1-23
 engineeringBuilding1-21
+engineeringPracticeBuildingA
 samsungLibrary
 researchBuilding2
 researchBuilding1

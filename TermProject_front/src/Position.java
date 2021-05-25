@@ -6,4 +6,11 @@ public class Position {
 		this.x = x;
 		this.y = y;
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		String str = "(" + x + ", "  + y + ")";
+		return str;
+	}
 }

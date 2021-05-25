@@ -88,6 +88,7 @@ class MyFrame extends JFrame {
 			else { //내 위치 입력 받았었으면 마우스 입력은 targetPos
 				targetPos.x = e.getX();
 				targetPos.y = e.getY();
+				System.out.println(targetPos.toString());
 			}
 			//System.out.println(e.getX());
 		}
