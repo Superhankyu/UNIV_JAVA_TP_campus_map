@@ -20,8 +20,8 @@ class MyFrame extends JFrame {
 	JLabel label_img;
 	
 	//마우스 및 키보드 input 변수
-	Position myPos = new Position(0, 0); // 현재 사용자 위치
-	Position targetPos = new Position(0, 0); // 도착할 장소(노드여야함) 위치
+	Position myPos = new Position(0, 0);
+	Position targetPos = new Position(0, 0);
 	
 	MyFrame() {
 		//setLayout(null);
@@ -35,7 +35,12 @@ class MyFrame extends JFrame {
 		JButton button = new JButton("send");
 		
 		label_img = new JLabel("campus");
-		label_img.setIcon(new ImageIcon("campus.jpg"));
+		ImageIcon icon = new ImageIcon("자과캠.jpg");
+		Image img = icon.getImage();
+		Image changeimg = img.getScaledInstance(600, 480, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon = new ImageIcon(changeimg);
+		label_img.setIcon(changeIcon);
+		//label_img.setIcon(new ImageIcon("campus.jpg"));
 		
 		panel.add(label);
 		panel.add(textField);
@@ -47,13 +52,13 @@ class MyFrame extends JFrame {
 		
 		pack(); // to combine
 		
+		panel.setBackground(Color.white);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800,600);
 		setVisible(true);
 	}
-
-	//메뉴바 만들기
-	private void CreateMenu() { //[1 메뉴_find path]: 현재 위치(가장 가까운 노드) --> 도착 위치 노드  [2 메뉴_find building]:현재 위치(가장 가까운 노드) --> 도착 건물 [3 메뉴_EXIT]
+	
+	private void CreateMenu() { //메뉴바 만들기 [1 메뉴_find path]: 현재 위치(가장 가까운 노드) --> 도착 위치 노드  [2 메뉴_find building]:현재 위치(가장 가까운 노드) --> 도착 건물 [3 메뉴_EXIT]
 		menuBar = new JMenuBar();
 		menu = new JMenu("Menu");
 		menuBar.add(menu);
@@ -73,7 +78,6 @@ class MyFrame extends JFrame {
 		setJMenuBar(menuBar);
 	}
 	
-	//마우스로 Position 입력 받는 함수
 	class MouseMotionAdapter implements MouseListener, MouseMotionListener{
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -106,34 +110,28 @@ class MyFrame extends JFrame {
         public void mouseMoved(MouseEvent e) {
         }
 	}
-	/*3가지 메뉴 각각 function 수행
-	1. Exit 메뉴: 나가기
-	2. Find Path: 마우스 입력 2번(현위치, 타겟 위치) 후 path 찾기
-	3. Find Building: 마우스 입력 1번(현위치), 키보드 입력 1번(의도) 후 path 찾기
-	*/
+	
 	class TestListenr implements ActionListener{
 		public void actionPerformed(ActionEvent event) {
-			if(event.getSource() == ExitItem) {
+			if(event.getSource() == ExitItem) { //[3 메뉴_EXIT] 클릭 시 끄기
 				System.exit(1);
 			}
 			else if(event.getSource() == fPathItem) {
 				label_img.addMouseListener(new MouseMotionAdapter());
 				label_img.addMouseMotionListener(new MouseMotionAdapter());
-				//TODO: targetPos는 가장 가까운 노드로 변경
 				FindPath();
 			}
 			else if(event.getSource() == fBuildItem) {
-				label_img.addMouseListener(new MouseMotionAdapter());
-				label_img.addMouseMotionListener(new MouseMotionAdapter());
 				FindBuilding();
 			}
 		}
+		
 		void FindPath() {
-			//TODO : 1)현위치, 타겟위치에서 가장 가까운 노드 찾기 2)findShortestPath()
+			
 		}
 		
 		void FindBuilding() {
-			//TODO : 1)현위치에서 가장 가까운 노드 찾기 2)findShortestPath()
+			
 		}
 	}
 	
