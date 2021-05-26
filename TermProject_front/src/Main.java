@@ -7,24 +7,60 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 class MyFrame extends JFrame {
-	JMenu menu;
+	JPanel panel;
+	PathFinder PathFinder = new PathFinder();
+	//variables for function
+	boolean FINDPATH = false;
+	boolean FINDBUILD = false;
+	boolean DATABASE = false;
 	
-	//硫붾돱諛� 蹂��닔
+	//variables for menu bar
 	JMenuBar menuBar;
-	JMenuItem fPathItem;
-	JMenuItem fBuildItem;
-	JMenuItem ExitItem;
+	JMenu menu1;
+	JMenuItem newPath;
+	JMenu menu2;
+	JMenuItem rBathroom;
+	JMenuItem rRestaurant;
+	JMenuItem rFeLounge;
+	JMenuItem rMaLounge;
+	JMenuItem convStore;
+	JMenuItem cafe;
+	JMenuItem disToil;
+	JMenu menu3;
+	JMenuItem addData;
+	JMenuItem eraseData;
 	
-	//留� �씠誘몄� 蹂��닔
+	//variable campus_img
 	JLabel label_img;
 	
-	//留덉슦�뒪 諛� �궎蹂대뱶 input 蹂��닔
-	Position myPos = new Position(0, 0); // �쁽�옱 �궗�슜�옄 �쐞移�
-	Position targetPos = new Position(0, 0); // �룄李⑺븷 �옣�냼(�끂�뱶�뿬�빞�븿) �쐞移�
+	//variable userPosition & targetPosition
+	Position myPos = new Position(0, 0);
+	List<Building> buildings = PathFinder.getAllBuildingInfos();
+	
+	//variable for popups
+	PopupFactory pf = PopupFactory.getSharedInstance();
+	JLabel curlocLabel;
+	Popup curlocPopup;
+	JLabel tarlocLabel;
+	Popup tarlocPopup;
+	ArrayList<Popup> popupList = new ArrayList<Popup>(); //target building button popup list
+	ArrayList<JButton> buttonList = new ArrayList<JButton>();
+	
+	//variable for design
+	Color buttonC=new Color(136, 133, 164); //background color of button
 	
 	MyFrame() {
 		//setLayout(null);
@@ -32,17 +68,20 @@ class MyFrame extends JFrame {
 		
 		setTitle("Campus Map");
 		
-		JPanel panel = new JPanel();
-		JLabel label = new JLabel("name: ");
-		JTextField textField = new JTextField(20);
-		JButton button = new JButton("send");
+		panel = new JPanel();
+		//JTextField textField = new JTextField(20);
 		
-		label_img = new JLabel("campus");
-		label_img.setIcon(new ImageIcon("campus.jpg"));
+		label_img = new JLabel();
+
+		ImageIcon icon = new ImageIcon("campus.jpg");
+		Image img = icon.getImage();
+		Image changeimg = img.getScaledInstance(600, 480, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon = new ImageIcon(changeimg);
+		label_img.setIcon(changeIcon);
 		
-		panel.add(label);
-		panel.add(textField);
-		panel.add(button);
+		panel.setBackground(Color.WHITE);
+		//panel.add(textField);
+		//panel.add(button);
 		panel.add(label_img);
 		// Content Pane: Space for attaching component or container linked to frame
 		Container c = getContentPane(); 
@@ -55,40 +94,163 @@ class MyFrame extends JFrame {
 		setVisible(true);
 	}
 
-	//硫붾돱諛� 留뚮뱾湲�
-	private void CreateMenu() { //[1 硫붾돱_find path]: �쁽�옱 �쐞移�(媛��옣 媛�源뚯슫 �끂�뱶) --> �룄李� �쐞移� �끂�뱶  [2 硫붾돱_find building]:�쁽�옱 �쐞移�(媛��옣 媛�源뚯슫 �끂�뱶) --> �룄李� 嫄대Ъ [3 硫붾돱_EXIT]
+	//Making MenuBar
+	private void CreateMenu() {
 		menuBar = new JMenuBar();
-		menu = new JMenu("Menu");
-		menuBar.add(menu);
-		fPathItem = new JMenuItem("Find Path");
-		fBuildItem = new JMenuItem("Find Building");
-		ExitItem = new JMenuItem("EXIT");
-		menu.add(fPathItem);
-		menu.add(fBuildItem);
-		menu.add(ExitItem);
-		menuBar.setBorder(BorderFactory.createLineBorder(Color.gray));
+		menuBar.add(Box.createRigidArea(new Dimension(10, 37)));
+		menuBar.setBorder(BorderFactory.createLineBorder(Color.black));
+		menuBar.setBackground(Color.ORANGE);
+		
+		//[menu1_find path]
+		menu1 = new JMenu("Find Path");
+		menuBar.add(menu1);
+		newPath = new JMenuItem("find new path");
+		menu1.add(newPath);
+		
+		//[menu2_find building]
+		menu2 = new JMenu("Find Building");
+		menuBar.add(menu2);
+		rBathroom = new JMenuItem("bathroom");
+		rRestaurant = new JMenuItem("restaurant");
+		rFeLounge = new JMenuItem("female student lounge");
+		rMaLounge = new JMenuItem("male student lounge");
+		convStore = new JMenuItem("convernience store");
+		cafe = new JMenuItem("cafe");
+		disToil = new JMenuItem("disabled toilets");		
+		menu2.add(rBathroom);
+		menu2.add(rRestaurant);
+		menu2.add(rFeLounge);
+		menu2.add(rMaLounge);
+		menu2.add(convStore);
+		menu2.add(cafe);
+		menu2.add(disToil);
+		
+		//[menu3_EXIT]
+		menu3 = new JMenu("SKKU Map Database");
+		menuBar.add(menu3);
+		addData = new JMenuItem("add new amenities");
+		eraseData = new JMenuItem("erase missing amenities");
+		menu3.add(addData);
+		menu3.add(eraseData);
 		
 		TestListenr listener = new TestListenr();
-		ExitItem.addActionListener(listener);
-		fPathItem.addActionListener(listener);
-		fBuildItem.addActionListener(listener);
+		newPath.addActionListener(listener);
+		rBathroom.addActionListener(listener);
+		rRestaurant.addActionListener(listener);
+		rFeLounge.addActionListener(listener);
+		rMaLounge.addActionListener(listener);
+		convStore.addActionListener(listener);
+		cafe.addActionListener(listener);
+		disToil.addActionListener(listener);
+		addData.addActionListener(listener);
+		eraseData.addActionListener(listener);
 		
 		setJMenuBar(menuBar);
 	}
 	
-	//留덉슦�뒪濡� Position �엯�젰 諛쏅뒗 �븿�닔
+	private ArrayList <JButton> CreateBuildPopup(){
+		for(int i = 0; i < buildings.size(); i++) {
+			
+			ImageIcon icon = new ImageIcon("place.png");
+			Image img = icon.getImage();
+			Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+			ImageIcon changeIcon = new ImageIcon(changeimg);
+			JButton button_place = new JButton(changeIcon);
+			button_place.setSize(10, 10);
+			button_place.setBorderPainted(false);
+			button_place.setBorder(null);
+			//button.setFocusable(false);
+			button_place.setMargin(new Insets(0, 0, 0, 0));
+			button_place.setContentAreaFilled(false);
+			ImageIcon icon2 = new ImageIcon("chooseplace.png");
+			Image img2 = icon2.getImage();
+			Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+			ImageIcon changeIcon2 = new ImageIcon(changeimg2);
+			button_place.setRolloverIcon(changeIcon2);
+			button_place.setPressedIcon(changeIcon2);
+			button_place.setDisabledIcon(changeIcon2);
+			Popup buildPopup = pf.getPopup(panel, button_place, buildings.get(i).vt.pos.x + 75, buildings.get(i).vt.pos.y + 35);
+			popupList.add(buildPopup);
+			buttonList.add(button_place);
+			buildPopup.show();
+		}
+		return buttonList;
+	}
+	
+	class RoundedButton extends JButton {
+		private static final long serialVersionUID = -6534565712701872577L;
+		public RoundedButton() { super(); decorate(); } 
+	      public RoundedButton(String text) { super(text); decorate(); } 
+	      public RoundedButton(Action action) { super(action); decorate(); } 
+	      public RoundedButton(Icon icon) { super(icon); decorate(); } 
+	      public RoundedButton(String text, Icon icon) { super(text, icon); decorate(); } 
+	      protected void decorate() { setBorderPainted(false); setOpaque(false); }
+	      @Override 
+	      protected void paintComponent(Graphics g) {
+	         Color o=new Color(0, 0, 0); //word color of button
+	         int width = getWidth(); 
+	         int height = getHeight();
+	         Graphics2D graphics = (Graphics2D) g; 
+	         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
+	         if (getModel().isArmed()) { graphics.setColor(buttonC.darker()); } 
+	         else if (getModel().isRollover()) { graphics.setColor(buttonC.brighter()); } 
+	         else { graphics.setColor(buttonC); } 
+	         graphics.fillRoundRect(0, 0, width, height, 10, 10); 
+	         FontMetrics fontMetrics = graphics.getFontMetrics(); 
+	         Rectangle stringBounds = fontMetrics.getStringBounds(this.getText(), graphics).getBounds(); 
+	         int textX = (width - stringBounds.width) / 2; 
+	         int textY = (height - stringBounds.height) / 2 + fontMetrics.getAscent(); 
+	         graphics.setColor(o); 
+	         graphics.setFont(new Font("Arial", Font.PLAIN, 11)); 
+	         graphics.drawString(getText(), textX, textY); 
+	         graphics.dispose(); 
+	         super.paintComponent(g); 
+	     }
+	}
+	
+	//get Position information from Mouse Input
 	class MouseMotionAdapter implements MouseListener, MouseMotionListener{
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(myPos.x == 0) { //�궡 �쐞移섎�� 諛쏆� �쟻�씠 �뾾�쑝硫� 留덉슦�뒪 �엯�젰�� myPos
+			if(myPos.x == 0 && FINDPATH == true) {
 				myPos.x = e.getX();
 				myPos.y = e.getY();
+				System.out.println(myPos.x);
+				System.out.println(myPos.y);
+				curlocPopup.hide();
+				
+				tarlocLabel = new JLabel("Click Your Target Location", JLabel.CENTER);				
+				tarlocLabel.setOpaque(true);
+				tarlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				tarlocLabel.setBorder(etborder);
+				tarlocPopup= pf.getPopup(panel, tarlocLabel, 30, 80);
+
+				tarlocPopup.show();
+				buttonList = CreateBuildPopup();
+				for(int i = 0; i< buttonList.size(); i++) {
+					int index = i;
+					buttonList.get(i).addActionListener(new ActionListener() {
+						@Override
+				        public void actionPerformed(ActionEvent e) {
+							tarlocPopup.hide();
+							for (int j = 0; j < popupList.size(); j++) {
+								popupList.get(j).hide();
+							}
+				            FindPath(index);
+				        }
+					});
+				}
 			}
-			else { //�궡 �쐞移� �엯�젰 諛쏆븯�뿀�쑝硫� 留덉슦�뒪 �엯�젰�� targetPos
-				targetPos.x = e.getX();
-				targetPos.y = e.getY();
+			else if(myPos.x == 0 && FINDBUILD == true) {
+				myPos.x = e.getX();
+				myPos.y = e.getY();
+				System.out.println(myPos.x);
+				System.out.println(myPos.y);
+				curlocPopup.hide();
+				
+				FindBuilding();
 			}
-			//System.out.println(e.getX());
 		}
 		@Override
 	    public void mouseEntered(MouseEvent e) {
@@ -109,52 +271,59 @@ class MyFrame extends JFrame {
         public void mouseMoved(MouseEvent e) {
         }
 	}
-	/*3媛�吏� 硫붾돱 媛곴컖 function �닔�뻾
-	1. Exit 硫붾돱: �굹媛�湲�
-	2. Find Path: 留덉슦�뒪 �엯�젰 2踰�(�쁽�쐞移�, ��寃� �쐞移�) �썑 path 李얘린
-	3. Find Building: 留덉슦�뒪 �엯�젰 1踰�(�쁽�쐞移�), �궎蹂대뱶 �엯�젰 1踰�(�쓽�룄) �썑 path 李얘린
+	/*3 menu Action Event
+	1. Find Path: 1)get user pos from mouse input 2)get target pos from mouse input 3)show shortest path
+	2. Find Building: 1)get room category from menu input 2)get user pos from mouse input 3)show shortest path
+	3. SKKU Map Database: 1)choose one of the menu(add or erase) 2)pop up new interface 3)room category & building with keyboard input 4)when wrong bat or build -->error message
 	*/
 	class TestListenr implements ActionListener{
-		public void actionPerformed(ActionEvent event) {
-			if(event.getSource() == ExitItem) {
-				System.exit(1);
-			}
-			else if(event.getSource() == fPathItem) {
-				label_img.addMouseListener(new MouseMotionAdapter());
-				label_img.addMouseMotionListener(new MouseMotionAdapter());
-				//TODO: targetPos�뒗 媛��옣 媛�源뚯슫 �끂�뱶濡� 蹂�寃�
-				FindPath();
-			}
-			else if(event.getSource() == fBuildItem) {
-				label_img.addMouseListener(new MouseMotionAdapter());
-				label_img.addMouseMotionListener(new MouseMotionAdapter());
-				FindBuilding();
-			}
-		}
-		void FindPath() {
-			//TODO : 1)�쁽�쐞移�, ��寃잛쐞移섏뿉�꽌 媛��옣 媛�源뚯슫 �끂�뱶 李얘린 2)findShortestPath()
-		}
 		
-		void FindBuilding() {
-			//TODO : 1)�쁽�쐞移섏뿉�꽌 媛��옣 媛�源뚯슫 �끂�뱶 李얘린 2)findShortestPath()
+		public void actionPerformed(ActionEvent event) {
+			if(event.getSource() == newPath) {
+				FINDPATH = true;
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(panel, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == rBathroom) {
+				FINDBUILD = true;
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+			}
+
 		}
 	}
+	private void FindPath(int buildIndex) {
+		//TODO :
+		Vertex myVer = PathFinder.findClosestVertex(myPos.x, myPos.y);
+		Building tarBuild = buildings.get(buildIndex);
+		System.out.println(myPos.x);
+	}
+	private void FindBuilding() {
+		//TODO :
+	}
 	
-	// PathFinder �씠�슜
-	// �옄�떊�쓽 �쐞移섎�� 援ы븷 �븣�뒗 findClosestVertex濡� �젣�씪 媛�源뚯슫 Vertex
-	// Mouse input target�� 嫄대Ъ留� 吏��젙 媛��뒫, 嫄대Ъ �젙蹂대뒗 getAllBuildingInfos�쑝濡� 媛��졇�샂
-	// Mouse input target�쑝濡� 湲몄갼湲� : findShortestPath(Vertex source, Building target)
-	// Category input target�쑝濡� 湲몄갼湲� : findShortestPath(Vertex source, String category)
+	// PathFinder
+	// findClosestVertex  Vertex
+	// Mouse input target,  getAllBuildingInfos
+	// Mouse input target: findShortestPath(Vertex source, Building target)
+	// Category input target: findShortestPath(Vertex source, String category)
 	// ----------------------------------------------------------------------------------------
-	// �솕硫댁뿉 + 踰꾪듉 �닃�윭�꽌 �궗�슜�옄 �엯�젰 李� �쓣�슦湲�
-	// �궗�슜�옄媛� submit �븯硫� Database class�뿉 setRoom(String rName, String category, Building building) �궗�슜
+	// submit Database class setRoom(String rName, String category, Building building) 
 }
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		// MyFrame mf = new MyFrame();
+		MyFrame mf = new MyFrame();
 		
 		try {
 			int socketPort = 1234; // 소켓 포트 설정
