@@ -73,6 +73,12 @@ public class PathFinder {
 
 				updateRooms();
 				defaultDataSet = true;
+				
+				//For Test
+//				List<Vertex> testPath = this.findShortestPath(this.findClosestVertex(100, 100), this.findClosestBuilding(300, 300));
+//				for(Vertex vt : testPath) {
+//					System.out.println(vt.toString());
+//				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
