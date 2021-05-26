@@ -7,26 +7,60 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 class MyFrame extends JFrame {
+	JPanel panel;
+	PathFinder PathFinder = new PathFinder();
+	//variables for function
+	boolean FINDPATH = false;
+	boolean FINDBUILD = false;
+	boolean DATABASE = false;
 	
 	//variables for menu bar
 	JMenuBar menuBar;
 	JMenu menu1;
+	JMenuItem newPath;
 	JMenu menu2;
+	JMenuItem rBathroom;
+	JMenuItem rRestaurant;
+	JMenuItem rFeLounge;
+	JMenuItem rMaLounge;
+	JMenuItem convStore;
+	JMenuItem cafe;
+	JMenuItem disToil;
 	JMenu menu3;
-	JMenuItem fPathItem;
-	JMenuItem fBuildItem;
-	JMenuItem ExitItem;
+	JMenuItem addData;
+	JMenuItem eraseData;
 	
 	//variable campus_img
 	JLabel label_img;
 	
 	//variable userPosition & targetPosition
 	Position myPos = new Position(0, 0);
-	Position targetPos = new Position(0, 0);
+	List<Building> buildings = PathFinder.getAllBuildingInfos();
+	
+	//variable for popups
+	PopupFactory pf = PopupFactory.getSharedInstance();
+	JLabel curlocLabel;
+	Popup curlocPopup;
+	JLabel tarlocLabel;
+	Popup tarlocPopup;
+	ArrayList<Popup> popupList = new ArrayList<Popup>(); //target building button popup list
+	ArrayList<JButton> buttonList = new ArrayList<JButton>();
+	
+	//variable for design
+	Color buttonC=new Color(136, 133, 164); //background color of button
 	
 	MyFrame() {
 		//setLayout(null);
@@ -34,10 +68,8 @@ class MyFrame extends JFrame {
 		
 		setTitle("Campus Map");
 		
-		JPanel panel = new JPanel();
-		JLabel label = new JLabel("name: ");
-		JTextField textField = new JTextField(20);
-		JButton button = new JButton("send");
+		panel = new JPanel();
+		//JTextField textField = new JTextField(20);
 		
 		label_img = new JLabel();
 
@@ -48,9 +80,8 @@ class MyFrame extends JFrame {
 		label_img.setIcon(changeIcon);
 		
 		panel.setBackground(Color.WHITE);
-		panel.add(label);
-		panel.add(textField);
-		panel.add(button);
+		//panel.add(textField);
+		//panel.add(button);
 		panel.add(label_img);
 		// Content Pane: Space for attaching component or container linked to frame
 		Container c = getContentPane(); 
@@ -66,46 +97,160 @@ class MyFrame extends JFrame {
 	//Making MenuBar
 	private void CreateMenu() {
 		menuBar = new JMenuBar();
+		menuBar.add(Box.createRigidArea(new Dimension(10, 37)));
+		menuBar.setBorder(BorderFactory.createLineBorder(Color.black));
+		menuBar.setBackground(Color.ORANGE);
+		
 		//[menu1_find path]
 		menu1 = new JMenu("Find Path");
 		menuBar.add(menu1);
+		newPath = new JMenuItem("find new path");
+		menu1.add(newPath);
+		
 		//[menu2_find building]
 		menu2 = new JMenu("Find Building");
 		menuBar.add(menu2);
+		rBathroom = new JMenuItem("bathroom");
+		rRestaurant = new JMenuItem("restaurant");
+		rFeLounge = new JMenuItem("female student lounge");
+		rMaLounge = new JMenuItem("male student lounge");
+		convStore = new JMenuItem("convernience store");
+		cafe = new JMenuItem("cafe");
+		disToil = new JMenuItem("disabled toilets");		
+		menu2.add(rBathroom);
+		menu2.add(rRestaurant);
+		menu2.add(rFeLounge);
+		menu2.add(rMaLounge);
+		menu2.add(convStore);
+		menu2.add(cafe);
+		menu2.add(disToil);
+		
 		//[menu3_EXIT]
-		menu3 = new JMenu("EXIT");
+		menu3 = new JMenu("SKKU Map Database");
 		menuBar.add(menu3);
-		
-		
-		fPathItem = new JMenuItem("Find Path");
-		fBuildItem = new JMenuItem("Find Building");
-		ExitItem = new JMenuItem("EXIT");
-		menu.add(fPathItem);
-		menu.add(fBuildItem);
-		menu.add(ExitItem);
-		menuBar.setBorder(BorderFactory.createLineBorder(Color.gray));
+		addData = new JMenuItem("add new amenities");
+		eraseData = new JMenuItem("erase missing amenities");
+		menu3.add(addData);
+		menu3.add(eraseData);
 		
 		TestListenr listener = new TestListenr();
-		ExitItem.addActionListener(listener);
-		fPathItem.addActionListener(listener);
-		fBuildItem.addActionListener(listener);
+		newPath.addActionListener(listener);
+		rBathroom.addActionListener(listener);
+		rRestaurant.addActionListener(listener);
+		rFeLounge.addActionListener(listener);
+		rMaLounge.addActionListener(listener);
+		convStore.addActionListener(listener);
+		cafe.addActionListener(listener);
+		disToil.addActionListener(listener);
+		addData.addActionListener(listener);
+		eraseData.addActionListener(listener);
 		
 		setJMenuBar(menuBar);
 	}
 	
-	//筌띾뜆�뒭占쎈뮞嚥∽옙 Position 占쎌뿯占쎌젾 獄쏆룆�뮉 占쎈맙占쎈땾
+	private ArrayList <JButton> CreateBuildPopup(){
+		for(int i = 0; i < buildings.size(); i++) {
+			
+			ImageIcon icon = new ImageIcon("place.png");
+			Image img = icon.getImage();
+			Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+			ImageIcon changeIcon = new ImageIcon(changeimg);
+			JButton button_place = new JButton(changeIcon);
+			button_place.setSize(10, 10);
+			button_place.setBorderPainted(false);
+			button_place.setBorder(null);
+			//button.setFocusable(false);
+			button_place.setMargin(new Insets(0, 0, 0, 0));
+			button_place.setContentAreaFilled(false);
+			ImageIcon icon2 = new ImageIcon("chooseplace.png");
+			Image img2 = icon2.getImage();
+			Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+			ImageIcon changeIcon2 = new ImageIcon(changeimg2);
+			button_place.setRolloverIcon(changeIcon2);
+			button_place.setPressedIcon(changeIcon2);
+			button_place.setDisabledIcon(changeIcon2);
+			Popup buildPopup = pf.getPopup(panel, button_place, buildings.get(i).vt.pos.x + 75, buildings.get(i).vt.pos.y + 35);
+			popupList.add(buildPopup);
+			buttonList.add(button_place);
+			buildPopup.show();
+		}
+		return buttonList;
+	}
+	
+	class RoundedButton extends JButton {
+		private static final long serialVersionUID = -6534565712701872577L;
+		public RoundedButton() { super(); decorate(); } 
+	      public RoundedButton(String text) { super(text); decorate(); } 
+	      public RoundedButton(Action action) { super(action); decorate(); } 
+	      public RoundedButton(Icon icon) { super(icon); decorate(); } 
+	      public RoundedButton(String text, Icon icon) { super(text, icon); decorate(); } 
+	      protected void decorate() { setBorderPainted(false); setOpaque(false); }
+	      @Override 
+	      protected void paintComponent(Graphics g) {
+	         Color o=new Color(0, 0, 0); //word color of button
+	         int width = getWidth(); 
+	         int height = getHeight();
+	         Graphics2D graphics = (Graphics2D) g; 
+	         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
+	         if (getModel().isArmed()) { graphics.setColor(buttonC.darker()); } 
+	         else if (getModel().isRollover()) { graphics.setColor(buttonC.brighter()); } 
+	         else { graphics.setColor(buttonC); } 
+	         graphics.fillRoundRect(0, 0, width, height, 10, 10); 
+	         FontMetrics fontMetrics = graphics.getFontMetrics(); 
+	         Rectangle stringBounds = fontMetrics.getStringBounds(this.getText(), graphics).getBounds(); 
+	         int textX = (width - stringBounds.width) / 2; 
+	         int textY = (height - stringBounds.height) / 2 + fontMetrics.getAscent(); 
+	         graphics.setColor(o); 
+	         graphics.setFont(new Font("Arial", Font.PLAIN, 11)); 
+	         graphics.drawString(getText(), textX, textY); 
+	         graphics.dispose(); 
+	         super.paintComponent(g); 
+	     }
+	}
+	
+	//get Position information from Mouse Input
 	class MouseMotionAdapter implements MouseListener, MouseMotionListener{
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(myPos.x == 0) { //占쎄땀 占쎌맄燁살꼶占쏙옙 獄쏆룇占� 占쎌읅占쎌뵠 占쎈씨占쎌몵筌롳옙 筌띾뜆�뒭占쎈뮞 占쎌뿯占쎌젾占쏙옙 myPos
+			if(myPos.x == 0 && FINDPATH == true) {
 				myPos.x = e.getX();
 				myPos.y = e.getY();
+				System.out.println(myPos.x);
+				System.out.println(myPos.y);
+				curlocPopup.hide();
+				
+				tarlocLabel = new JLabel("Click Your Target Location", JLabel.CENTER);				
+				tarlocLabel.setOpaque(true);
+				tarlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				tarlocLabel.setBorder(etborder);
+				tarlocPopup= pf.getPopup(panel, tarlocLabel, 30, 80);
+
+				tarlocPopup.show();
+				buttonList = CreateBuildPopup();
+				for(int i = 0; i< buttonList.size(); i++) {
+					int index = i;
+					buttonList.get(i).addActionListener(new ActionListener() {
+						@Override
+				        public void actionPerformed(ActionEvent e) {
+							tarlocPopup.hide();
+							for (int j = 0; j < popupList.size(); j++) {
+								popupList.get(j).hide();
+							}
+				            FindPath(index);
+				        }
+					});
+				}
 			}
-			else { //占쎄땀 占쎌맄燁삼옙 占쎌뿯占쎌젾 獄쏆룇釉�占쎈�占쎌몵筌롳옙 筌띾뜆�뒭占쎈뮞 占쎌뿯占쎌젾占쏙옙 targetPos
-				targetPos.x = e.getX();
-				targetPos.y = e.getY();
+			else if(myPos.x == 0 && FINDBUILD == true) {
+				myPos.x = e.getX();
+				myPos.y = e.getY();
+				System.out.println(myPos.x);
+				System.out.println(myPos.y);
+				curlocPopup.hide();
+				
+				FindBuilding();
 			}
-			//System.out.println(e.getX());
 		}
 		@Override
 	    public void mouseEntered(MouseEvent e) {
@@ -126,45 +271,52 @@ class MyFrame extends JFrame {
         public void mouseMoved(MouseEvent e) {
         }
 	}
-	/*3揶쏉옙筌욑옙 筌롫뗀�뤀 揶쏄낫而� function 占쎈땾占쎈뻬
-	1. Exit 筌롫뗀�뤀: 占쎄돌揶쏉옙疫뀐옙
-	2. Find Path: 筌띾뜆�뒭占쎈뮞 占쎌뿯占쎌젾 2甕곤옙(占쎌겱占쎌맄燁삼옙, 占쏙옙野껓옙 占쎌맄燁삼옙) 占쎌뜎 path 筌≪뼐由�
-	3. Find Building: 筌띾뜆�뒭占쎈뮞 占쎌뿯占쎌젾 1甕곤옙(占쎌겱占쎌맄燁삼옙), 占쎄텕癰귣�諭� 占쎌뿯占쎌젾 1甕곤옙(占쎌벥占쎈즲) 占쎌뜎 path 筌≪뼐由�
+	/*3 menu Action Event
+	1. Find Path: 1)get user pos from mouse input 2)get target pos from mouse input 3)show shortest path
+	2. Find Building: 1)get room category from menu input 2)get user pos from mouse input 3)show shortest path
+	3. SKKU Map Database: 1)choose one of the menu(add or erase) 2)pop up new interface 3)room category & building with keyboard input 4)when wrong bat or build -->error message
 	*/
 	class TestListenr implements ActionListener{
-		public void actionPerformed(ActionEvent event) {
-			if(event.getSource() == ExitItem) {
-				System.exit(1);
-			}
-			else if(event.getSource() == fPathItem) {
-				label_img.addMouseListener(new MouseMotionAdapter());
-				label_img.addMouseMotionListener(new MouseMotionAdapter());
-				//TODO: targetPos占쎈뮉 揶쏉옙占쎌삢 揶쏉옙繹먮슣�뒲 占쎈걗占쎈굡嚥∽옙 癰귨옙野껓옙
-				FindPath();
-			}
-			else if(event.getSource() == fBuildItem) {
-				label_img.addMouseListener(new MouseMotionAdapter());
-				label_img.addMouseMotionListener(new MouseMotionAdapter());
-				FindBuilding();
-			}
-		}
-		void FindPath() {
-			//TODO : 1)占쎌겱占쎌맄燁삼옙, 占쏙옙野껋옕�맄燁살꼷肉됵옙苑� 揶쏉옙占쎌삢 揶쏉옙繹먮슣�뒲 占쎈걗占쎈굡 筌≪뼐由� 2)findShortestPath()
-		}
 		
-		void FindBuilding() {
-			//TODO : 1)占쎌겱占쎌맄燁살꼷肉됵옙苑� 揶쏉옙占쎌삢 揶쏉옙繹먮슣�뒲 占쎈걗占쎈굡 筌≪뼐由� 2)findShortestPath()
+		public void actionPerformed(ActionEvent event) {
+			if(event.getSource() == newPath) {
+				FINDPATH = true;
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(panel, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == rBathroom) {
+				FINDBUILD = true;
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+			}
+
 		}
 	}
+	private void FindPath(int buildIndex) {
+		//TODO :
+		Vertex myVer = PathFinder.findClosestVertex(myPos.x, myPos.y);
+		Building tarBuild = buildings.get(buildIndex);
+		System.out.println(myPos.x);
+	}
+	private void FindBuilding() {
+		//TODO :
+	}
 	
-	// PathFinder 占쎌뵠占쎌뒠
-	// 占쎌쁽占쎈뻿占쎌벥 占쎌맄燁살꼶占쏙옙 �뤃�뗫막 占쎈르占쎈뮉 findClosestVertex嚥∽옙 占쎌젫占쎌뵬 揶쏉옙繹먮슣�뒲 Vertex
-	// Mouse input target占쏙옙 椰꾨�窺筌랃옙 筌욑옙占쎌젟 揶쏉옙占쎈뮟, 椰꾨�窺 占쎌젟癰귣��뮉 getAllBuildingInfos占쎌몵嚥∽옙 揶쏉옙占쎌죬占쎌긾
-	// Mouse input target占쎌몵嚥∽옙 疫뀀챷媛쇗묾占� : findShortestPath(Vertex source, Building target)
-	// Category input target占쎌몵嚥∽옙 疫뀀챷媛쇗묾占� : findShortestPath(Vertex source, String category)
+	// PathFinder
+	// findClosestVertex  Vertex
+	// Mouse input target,  getAllBuildingInfos
+	// Mouse input target: findShortestPath(Vertex source, Building target)
+	// Category input target: findShortestPath(Vertex source, String category)
 	// ----------------------------------------------------------------------------------------
-	// 占쎌넅筌롫똻肉� + 甕곌쑵�뱣 占쎈땭占쎌쑎占쎄퐣 占쎄텢占쎌뒠占쎌쁽 占쎌뿯占쎌젾 筌∽옙 占쎌뱽占쎌뒭疫뀐옙
-	// 占쎄텢占쎌뒠占쎌쁽揶쏉옙 submit 占쎈릭筌롳옙 Database class占쎈퓠 setRoom(String rName, String category, Building building) 占쎄텢占쎌뒠
+	// submit Database class setRoom(String rName, String category, Building building) 
 }
 
 public class Main {
@@ -172,24 +324,24 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MyFrame mf = new MyFrame();
-		/*
+		
 		try {
-			int socketPort = 1234; // �냼耳� �룷�듃 �꽕�젙
-            ServerSocket serverSocket = new ServerSocket(socketPort); // �꽌踰� �냼耳� 留뚮뱾湲�
-            // �꽌踰� �삤�뵂 �솗�씤�슜
-            System.out.println("socket : " + socketPort + "�쑝濡� �꽌踰꾧� �뿴�졇�뒿�땲�떎");
+			int socketPort = 1234; // 소켓 포트 설정
+            ServerSocket serverSocket = new ServerSocket(socketPort); // 서버 소켓 만들기
+            // 서버 오픈 확인용
+            System.out.println("socket : " + socketPort + "으로 서버가 열렸습니다");
 	
-            // �냼耳� �꽌踰꾧� 醫낅즺�맆 �븣源뚯� 臾댄븳猷⑦봽 �쑀�� �닔留뚰겮 �뒪�젅�뱶媛� �깮�꽦�씠 �맖.
+            // 소켓 서버가 종료될 때까지 무한루프 유저 수만큼 스레드가 생성이 됨.
             while(true) {
-                Socket socketUser = serverSocket.accept(); // �꽌踰꾩뿉 �겢�씪�씠�뼵�듃 �젒�냽 �떆
-                // Thread �븞�뿉 �겢�씪�씠�뼵�듃 �젙蹂대�� �떞�븘以�
-                //Thread thd = new Server(socketUser);
-                //thd.start(); // Thread �떆�옉
+                Socket socketUser = serverSocket.accept(); // 서버에 클라이언트 접속 시
+                // Thread 안에 클라이언트 정보를 담아줌
+                Thread thd = new Server(socketUser);
+                thd.start(); // Thread 시작
             }                 
         
 	} catch (IOException e) {
-		e.printStackTrace(); // �삁�쇅泥섎━
-	}*/
+		e.printStackTrace(); // 예외처리
+	}
 	}
 
 }
