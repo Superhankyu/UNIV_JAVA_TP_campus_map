@@ -1,7 +1,13 @@
-import java.util.List;
-
 public class Building {
-	public Position pos;
 	public String bName;
-	public List<Door> doors;
+	public int openTime;
+	public int closeTime;
+	public Vertex vt;
+
+	public Building(String bName, int openTime, int closeTime, Vertex vt){
+		this.bName = bName;
+		this.openTime = openTime;
+		this.closeTime = closeTime;
+		this.vt = vt;
+	}
 }
