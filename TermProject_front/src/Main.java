@@ -1,9 +1,13 @@
 import java.awt.*;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,9 +50,12 @@ class MyFrame extends JFrame {
 	//variable campus_img
 	JLabel label_img;
 	
-	//variable userPosition & targetPosition
+	//variable userPosition & targetPosition & PathPosition
 	Position myPos = new Position(0, 0);
 	List<Building> buildings = PathFinder.getAllBuildingInfos();
+	List<Vertex> path = new ArrayList<Vertex>();
+	int[] xPoints;
+	int[] yPoints;
 	
 	//variable for popups
 	PopupFactory pf = PopupFactory.getSharedInstance();
@@ -150,7 +157,6 @@ class MyFrame extends JFrame {
 	
 	private ArrayList <JButton> CreateBuildPopup(){
 		for(int i = 0; i < buildings.size(); i++) {
-			
 			ImageIcon icon = new ImageIcon("place.png");
 			Image img = icon.getImage();
 			Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
@@ -169,7 +175,7 @@ class MyFrame extends JFrame {
 			button_place.setRolloverIcon(changeIcon2);
 			button_place.setPressedIcon(changeIcon2);
 			button_place.setDisabledIcon(changeIcon2);
-			Popup buildPopup = pf.getPopup(panel, button_place, buildings.get(i).vt.pos.x + 75, buildings.get(i).vt.pos.y + 35);
+			Popup buildPopup = pf.getPopup(label_img, button_place, buildings.get(i).vt.pos.x + 80, buildings.get(i).vt.pos.y + 40);
 			popupList.add(buildPopup);
 			buttonList.add(button_place);
 			buildPopup.show();
@@ -215,8 +221,6 @@ class MyFrame extends JFrame {
 			if(myPos.x == 0 && FINDPATH == true) {
 				myPos.x = e.getX();
 				myPos.y = e.getY();
-				System.out.println(myPos.x);
-				System.out.println(myPos.y);
 				curlocPopup.hide();
 				
 				tarlocLabel = new JLabel("Click Your Target Location", JLabel.CENTER);				
@@ -224,7 +228,7 @@ class MyFrame extends JFrame {
 				tarlocLabel.setPreferredSize(new Dimension(190, 70));
 				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
 				tarlocLabel.setBorder(etborder);
-				tarlocPopup= pf.getPopup(panel, tarlocLabel, 30, 80);
+				tarlocPopup= pf.getPopup(label_img, tarlocLabel, 30, 80);
 
 				tarlocPopup.show();
 				buttonList = CreateBuildPopup();
@@ -237,7 +241,7 @@ class MyFrame extends JFrame {
 							for (int j = 0; j < popupList.size(); j++) {
 								popupList.get(j).hide();
 							}
-				            FindPath(index);
+				            findPath(index);
 				        }
 					});
 				}
@@ -245,8 +249,6 @@ class MyFrame extends JFrame {
 			else if(myPos.x == 0 && FINDBUILD == true) {
 				myPos.x = e.getX();
 				myPos.y = e.getY();
-				System.out.println(myPos.x);
-				System.out.println(myPos.y);
 				curlocPopup.hide();
 				
 				FindBuilding();
@@ -277,8 +279,8 @@ class MyFrame extends JFrame {
 	3. SKKU Map Database: 1)choose one of the menu(add or erase) 2)pop up new interface 3)room category & building with keyboard input 4)when wrong bat or build -->error message
 	*/
 	class TestListenr implements ActionListener{
-		
 		public void actionPerformed(ActionEvent event) {
+			path = new ArrayList<Vertex>();
 			if(event.getSource() == newPath) {
 				FINDPATH = true;
 				label_img.addMouseListener(new MouseMotionAdapter());
@@ -288,7 +290,7 @@ class MyFrame extends JFrame {
 				curlocLabel.setPreferredSize(new Dimension(190, 70));
 				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
 				curlocLabel.setBorder(etborder);
-				curlocPopup= pf.getPopup(panel, curlocLabel, 30, 80);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
 						
 				curlocPopup.show();
 			}
@@ -300,12 +302,36 @@ class MyFrame extends JFrame {
 
 		}
 	}
-	private void FindPath(int buildIndex) {
+	
+	private void findPath(int buildIndex) {
 		//TODO :
 		Vertex myVer = PathFinder.findClosestVertex(myPos.x, myPos.y);
 		Building tarBuild = buildings.get(buildIndex);
-		System.out.println(myPos.x);
+		path = PathFinder.findShortestPath(myVer, tarBuild);
+		xPoints= new int[path.size()];
+		yPoints= new int[path.size()];
+		for(int i = 0; i < path.size(); i++) {
+			xPoints[i] = path.get(i).pos.x + 90;
+			yPoints[i] = path.get(i).pos.y + 80;
+		}
 	}
+	
+	
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		if(path.size() != 0) {
+			Graphics2D g2 = (Graphics2D) g;
+			for(int i = 0; i < path.size()-1; i++) {
+				g2.setStroke(new BasicStroke(5));
+				g2.setColor(Color.ORANGE);
+				g2.draw(new Line2D.Float(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]));
+			}
+		}
+		else {
+		}
+	}
+
 	private void FindBuilding() {
 		//TODO :
 	}
