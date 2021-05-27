@@ -6,8 +6,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,10 +24,17 @@ import org.json.JSONObject;
 class MyFrame extends JFrame {
 	JPanel panel;
 	PathFinder PathFinder = new PathFinder();
+	Database Database = new Database();
+
 	//variables for function
 	boolean FINDPATH = false;
 	boolean FINDBUILD = false;
 	boolean DATABASE = false;
+	RoundedButton start;
+	String dbrName;
+	String dbCategory;
+	String dbbName;
+	RoundedButton sendButton;
 	
 	//variables for menu bar
 	JMenuBar menuBar;
@@ -46,6 +51,9 @@ class MyFrame extends JFrame {
 	JMenu menu3;
 	JMenuItem addData;
 	JMenuItem eraseData;
+	JMenu menu4;
+	//JMenuItem clearAll;
+	JMenuItem exit;
 	
 	//variable campus_img
 	JLabel label_img;
@@ -53,7 +61,10 @@ class MyFrame extends JFrame {
 	//variable userPosition & targetPosition & PathPosition
 	Position myPos = new Position(0, 0);
 	List<Building> buildings = PathFinder.getAllBuildingInfos();
+	String category;
 	List<Vertex> path = new ArrayList<Vertex>();
+	
+	//variable for drawing path line
 	int[] xPoints;
 	int[] yPoints;
 	
@@ -63,11 +74,15 @@ class MyFrame extends JFrame {
 	Popup curlocPopup;
 	JLabel tarlocLabel;
 	Popup tarlocPopup;
+	Popup startPopup;
 	ArrayList<Popup> popupList = new ArrayList<Popup>(); //target building button popup list
 	ArrayList<JButton> buttonList = new ArrayList<JButton>();
+	JPanel dbPanel;
+	Popup dbPopup;
 	
 	//variable for design
 	Color buttonC=new Color(136, 133, 164); //background color of button
+	List<Line2D> lineList = new ArrayList<Line2D>();
 	
 	MyFrame() {
 		//setLayout(null);
@@ -87,8 +102,6 @@ class MyFrame extends JFrame {
 		label_img.setIcon(changeIcon);
 		
 		panel.setBackground(Color.WHITE);
-		//panel.add(textField);
-		//panel.add(button);
 		panel.add(label_img);
 		// Content Pane: Space for attaching component or container linked to frame
 		Container c = getContentPane(); 
@@ -132,13 +145,21 @@ class MyFrame extends JFrame {
 		menu2.add(cafe);
 		menu2.add(disToil);
 		
-		//[menu3_EXIT]
+		//[menu3_Database]
 		menu3 = new JMenu("SKKU Map Database");
 		menuBar.add(menu3);
 		addData = new JMenuItem("add new amenities");
 		eraseData = new JMenuItem("erase missing amenities");
 		menu3.add(addData);
 		menu3.add(eraseData);
+		
+		//[menu4_EXIT]
+		menu4 = new JMenu("EXIT");
+		menuBar.add(menu4);
+		exit = new JMenuItem("EXIT");
+		//clearAll = new JMenuItem("Clear All");
+		//menu4.add(clearAll);
+		menu4.add(exit);
 		
 		TestListenr listener = new TestListenr();
 		newPath.addActionListener(listener);
@@ -151,6 +172,8 @@ class MyFrame extends JFrame {
 		disToil.addActionListener(listener);
 		addData.addActionListener(listener);
 		eraseData.addActionListener(listener);
+		exit.addActionListener(listener);
+		//clearAll.addActionListener(listener);
 		
 		setJMenuBar(menuBar);
 	}
@@ -207,7 +230,7 @@ class MyFrame extends JFrame {
 	         int textX = (width - stringBounds.width) / 2; 
 	         int textY = (height - stringBounds.height) / 2 + fontMetrics.getAscent(); 
 	         graphics.setColor(o); 
-	         graphics.setFont(new Font("Arial", Font.PLAIN, 11)); 
+	         graphics.setFont(getFont()); 
 	         graphics.drawString(getText(), textX, textY); 
 	         graphics.dispose(); 
 	         super.paintComponent(g); 
@@ -250,8 +273,16 @@ class MyFrame extends JFrame {
 				myPos.x = e.getX();
 				myPos.y = e.getY();
 				curlocPopup.hide();
-				
-				FindBuilding();
+				start = new RoundedButton("find closest " + category +"!");
+				startPopup = pf.getPopup(label_img, start, myPos.x, myPos.y);
+				startPopup.show();
+				start.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						startPopup.hide();
+						findBuilding();
+					}
+				});
 			}
 		}
 		@Override
@@ -279,9 +310,19 @@ class MyFrame extends JFrame {
 	3. SKKU Map Database: 1)choose one of the menu(add or erase) 2)pop up new interface 3)room category & building with keyboard input 4)when wrong bat or build -->error message
 	*/
 	class TestListenr implements ActionListener{
+		JTextField textField1;
+		JTextField textField2;
+		JTextField textField3;
+		public void getFieldText() {
+			dbrName = textField1.getText();
+			dbCategory = textField2.getText();
+			dbbName = textField3.getText();
+		}
 		public void actionPerformed(ActionEvent event) {
 			path = new ArrayList<Vertex>();
 			if(event.getSource() == newPath) {
+				myPos.x = 0;
+				myPos.y = 0;
 				FINDPATH = true;
 				label_img.addMouseListener(new MouseMotionAdapter());
 				label_img.addMouseMotionListener(new MouseMotionAdapter());
@@ -295,16 +336,163 @@ class MyFrame extends JFrame {
 				curlocPopup.show();
 			}
 			else if(event.getSource() == rBathroom) {
+				myPos.x = 0;
+				myPos.y = 0;
 				FINDBUILD = true;
+				category = "bathroom";
 				label_img.addMouseListener(new MouseMotionAdapter());
 				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
 			}
-
+			else if(event.getSource() == rRestaurant) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "restaurant";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == rFeLounge) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "femaleStudentLounge";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == rMaLounge) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "maleStudentLounge";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == convStore) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "convenienceStore";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == cafe) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "cafe";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == disToil) {
+				myPos.x = 0;
+				myPos.y = 0;
+				FINDBUILD = true;
+				category = "disabledToilets";
+				label_img.addMouseListener(new MouseMotionAdapter());
+				label_img.addMouseMotionListener(new MouseMotionAdapter());
+				curlocLabel = new JLabel("Click Your Current Location",JLabel.CENTER);
+				curlocLabel.setOpaque(true);
+				curlocLabel.setPreferredSize(new Dimension(190, 70));
+				EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+				curlocLabel.setBorder(etborder);
+				curlocPopup= pf.getPopup(label_img, curlocLabel, 30, 80);
+						
+				curlocPopup.show();
+			}
+			else if(event.getSource() == addData) {
+				DATABASE = true;
+				dbPanel = new JPanel();
+				dbPanel.setPreferredSize(new Dimension(300, 130));
+				dbPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+				dbPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+				JLabel rNameLabel = new JLabel("Roomname: ");
+				textField1 = new JTextField(18);
+				JLabel catLabel = new JLabel("Category:     ");
+				textField2 = new JTextField(18);
+				JLabel buildLabel = new JLabel("Building:       ");
+				textField3 = new JTextField(18);
+				sendButton = new RoundedButton("SEND");
+				
+				dbPanel.add(rNameLabel);
+				dbPanel.add(textField1);
+				dbPanel.add(catLabel);
+				dbPanel.add(textField2);
+				dbPanel.add(buildLabel);
+				dbPanel.add(textField3);
+				dbPanel.add(sendButton);
+				
+				dbPopup = pf.getPopup(label_img, dbPanel, 30, 80);
+				dbPopup.show();
+				
+				sendButton.addActionListener(new ActionListener() {
+					@Override
+			        public void actionPerformed(ActionEvent e) {
+						getFieldText();
+						Database.setRoom(dbrName, dbCategory, dbbName);
+						dbPopup.hide();
+			        }
+				});
+			}
+			/*else if(event.getSource() == clearAll) { //TODO: clear All painting on the Frame
+				FINDPATH = false;
+				FINDBUILD = false;
+				DATABASE = false;
+			}*/
+			else if(event.getSource() == exit) {
+				System.exit(0);
+			}
 		}
 	}
 	
 	private void findPath(int buildIndex) {
-		//TODO :
 		Vertex myVer = PathFinder.findClosestVertex(myPos.x, myPos.y);
 		Building tarBuild = buildings.get(buildIndex);
 		path = PathFinder.findShortestPath(myVer, tarBuild);
@@ -316,6 +504,37 @@ class MyFrame extends JFrame {
 		}
 	}
 	
+	private void findBuilding() {
+		Vertex myVer = PathFinder.findClosestVertex(myPos.x, myPos.y);
+		path = PathFinder.findShortestPath(myVer, category);
+		xPoints= new int[path.size()];
+		yPoints= new int[path.size()];
+		for(int i = 0; i < path.size(); i++) {
+			xPoints[i] = path.get(i).pos.x + 90;
+			yPoints[i] = path.get(i).pos.y + 80;
+		}
+		ImageIcon icon = new ImageIcon("chooseplace.png");
+		Image img = icon.getImage();
+		Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon = new ImageIcon(changeimg);
+		JButton button_place = new JButton(changeIcon);
+		button_place.setSize(10, 10);
+		button_place.setBorderPainted(false);
+		button_place.setBorder(null);
+		button_place.setBackground(getBackground());
+		//button.setFocusable(false);
+		button_place.setMargin(new Insets(0, 0, 0, 0));
+		button_place.setContentAreaFilled(false);
+		ImageIcon icon2 = new ImageIcon("chooseplace.png");
+		Image img2 = icon2.getImage();
+		Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon2 = new ImageIcon(changeimg2);
+		button_place.setRolloverIcon(changeIcon2);
+		button_place.setPressedIcon(changeIcon2);
+		button_place.setDisabledIcon(changeIcon2);
+		Popup buildPopup = pf.getPopup(label_img, button_place, xPoints[path.size()-1]-10, yPoints[path.size()-1]-40);
+		buildPopup.show();
+	}
 	
 	@Override
 	public void paint(Graphics g) {
@@ -323,17 +542,14 @@ class MyFrame extends JFrame {
 		if(path.size() != 0) {
 			Graphics2D g2 = (Graphics2D) g;
 			for(int i = 0; i < path.size()-1; i++) {
-				g2.setStroke(new BasicStroke(5));
+				Stroke stroke = new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
+				g2.setStroke(stroke);
 				g2.setColor(Color.ORANGE);
-				g2.draw(new Line2D.Float(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]));
+				Line2D line = new Line2D.Float(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
+				lineList.add(line);
+				g2.draw(line);
 			}
 		}
-		else {
-		}
-	}
-
-	private void FindBuilding() {
-		//TODO :
 	}
 	
 	// PathFinder
@@ -344,6 +560,7 @@ class MyFrame extends JFrame {
 	// ----------------------------------------------------------------------------------------
 	// submit Database class setRoom(String rName, String category, Building building) 
 }
+
 
 public class Main {
 
