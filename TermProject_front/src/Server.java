@@ -42,12 +42,11 @@ public class Server extends Thread{
 			
 			Database DB = new Database();
 		
-					
-			String WhatToDo = reader.readLine(); // get input from GUI
+			String WhatToDo = "hasd";	
+			// String WhatToDo = reader.readLine(); // get input from GUI
 			
 			if(WhatToDo.equals("insertNew")) { // when users are give DB some new information.
 				writer.println("insert"); 
-				
 				writer.println("rName : "); // writer Lines can be Deleted or be a GUI interface. 3 Questions.
 				rName = reader.readLine(); // get input from GUI
 				writer.println("Category : ");

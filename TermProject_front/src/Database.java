@@ -27,7 +27,7 @@ public class Database {
 			ResultSet rset;
 			String sql;
 			
-			sql = "select * from Room where rName = '" +rName+ "' and category = '"+category+"' and building = '"+building+"'"; // TODO FOR DETAILS
+			sql = "select * from room where rName = '" +rName+ "' and category = '"+category+"' and building = '"+building+"'"; // TODO FOR DETAILS
 			rset = stmt.executeQuery(sql);
 			
 			while(rset.next()) { 
@@ -59,7 +59,39 @@ public class Database {
 			Statement stmt = conn.createStatement();
 			String sql;	
 			
-			sql = "insert into Room values('"+rName+"', '"+category+"', '"+building+"')"; // TODO FOR DETAILS
+			sql = "insert into room values('"+rName+"', '"+category+"', '"+building+"')"; // TODO FOR DETAILS
+			
+			int updated = stmt.executeUpdate(sql); // return number of updated queries.
+			if(updated >= 1) {
+				stmt.close();
+				conn.close();
+				return true;
+			}
+			else { // cannot update.
+				stmt.close();
+				conn.close();
+				return false;
+			}			
+		}
+		catch(SQLException sqle) {
+			System.out.println("SQLException "+ sqle);
+		}
+		catch(Exception e) {
+			System.out.println("Exception "+ e);
+		}
+		return false;
+	}
+	
+	public boolean eraseRoom(String rName, String category, String building) {  // erase data.
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javaPro",
+					"root", "1234");
+			
+			Statement stmt = conn.createStatement();
+			String sql;	
+			
+			sql = "delete from room where rName = '" +rName+ "' and category = '"+category+"' and building = '"+building+"' "; // TODO FOR DETAILS
 			
 			int updated = stmt.executeUpdate(sql); // return number of updated queries.
 			if(updated >= 1) {

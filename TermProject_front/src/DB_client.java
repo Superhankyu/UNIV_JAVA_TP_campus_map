@@ -16,13 +16,16 @@ public class DB_client {
 			socket = new Socket("192.168.219.100", 1234); // TEST -> LOCALHOST
 			System.out.println("서버에 접속 성공!"); // 접속 확인용
 			
+			Database db = new Database();
+		
             // 서버에서 보낸 메세지 읽는 Thread
 			listen_thread t1 = new listen_thread(socket);
 			WritingThread t2 = new WritingThread(socket); // GUI Thread start.
 
 			t1.start(); // ListeningThread Start
 			t2.start(); // WritingThread Start
-            
+			// MyFrame mf = new MyFrame();
+			
 		} catch (IOException e) {
 			e.printStackTrace(); // 예외처리
 		}
