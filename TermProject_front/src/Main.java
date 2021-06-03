@@ -53,7 +53,7 @@ class MyFrame extends JFrame {
 	JMenuItem eraseData;
 	JMenu menu4;
 	
-	JMenuItem clearAll;
+	JMenuItem startNew;
 	JMenuItem exit;
 	
 	//variable campus_img
@@ -155,11 +155,11 @@ class MyFrame extends JFrame {
 		menu3.add(eraseData);
 		
 		//[menu4_EXIT]
-		menu4 = new JMenu("Clear or Exit");
+		menu4 = new JMenu("Start new map or Exit");
 		menuBar.add(menu4);
 		exit = new JMenuItem("EXIT");
-		clearAll = new JMenuItem("Clear All");
-		menu4.add(clearAll);
+		startNew = new JMenuItem("Start new map");
+		menu4.add(startNew);
 		menu4.add(exit);
 		
 		TestListenr listener = new TestListenr();
@@ -174,7 +174,7 @@ class MyFrame extends JFrame {
 		addData.addActionListener(listener);
 		eraseData.addActionListener(listener);
 		exit.addActionListener(listener);
-		clearAll.addActionListener(listener);
+		startNew.addActionListener(listener);
 		
 		setJMenuBar(menuBar);
 	}
@@ -526,7 +526,7 @@ class MyFrame extends JFrame {
 			        }
 				});
 			}
-			else if(event.getSource() == clearAll) { //TODO: clear All painting on the Frame
+			else if(event.getSource() == startNew) { //TODO: clear All painting on the Frame
 				
 			}
 			else if(event.getSource() == exit) {
