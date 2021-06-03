@@ -6,22 +6,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-class MyFrame extends JFrame {
+public class MyFrame extends JFrame {
 	final int paint_offset_x = 8;
 	final int paint_offset_y = -8;
 	
@@ -615,31 +606,4 @@ class MyFrame extends JFrame {
 	// Category input target: findShortestPath(Vertex source, String category)
 	// ----------------------------------------------------------------------------------------
 	// submit Database class setRoom(String rName, String category, Building building) 
-}
-
-public class Main {
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		//MyFrame mf = new MyFrame();
-		
-		try {
-			int socketPort = 1234; // 소켓 포트 설정
-            ServerSocket serverSocket = new ServerSocket(socketPort); // 서버 소켓 만들기
-            // 서버 오픈 확인용
-            System.out.println("socket : " + socketPort + "으로 서버가 열렸습니다");
-	
-            // 소켓 서버가 종료될 때까지 무한루프 유저 수만큼 스레드가 생성이 됨.
-            while(true) {
-                Socket socketUser = serverSocket.accept(); // 서버에 클라이언트 접속 시
-                // Thread 안에 클라이언트 정보를 담아줌
-                Thread thd = new Server(socketUser);
-                thd.start(); // Thread 시작
-            }                 
-        
-	} catch (IOException e) {
-		e.printStackTrace(); // 예외처리
-	}
-	}
-
 }

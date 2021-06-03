@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class listen_thread extends Thread { // 서버에서 보낸 메세지 읽는 Thread
+public class Client_thread extends Thread { // 서버에서 보낸 메세지 읽는 Thread
 	Socket socket = null;
 
-	public listen_thread(Socket socket) { // 생성자
+	public Client_thread(Socket socket) { // 생성자
 		this.socket = socket; // 받아온 Socket Parameter를 해당 클래스 Socket에 넣기
 	}
 	

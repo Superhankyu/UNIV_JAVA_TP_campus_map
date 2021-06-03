@@ -1,72 +1,27 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Server extends Thread{
-	static String building_number;
-	static Double xposition;
-	static ArrayList<Socket> list = new ArrayList<Socket>(); // À¯Àú È®ÀÎ¿ë
-	static Socket socket = null;
-	
-	public Server(Socket socket) {
-		this.socket = socket; // À¯Àú socketÀ» ÇÒ´ç
-		list.add(socket); // À¯Àú¸¦ list¿¡ Ãß°¡
-	}
-	public void run() {
+public class Server {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub		
 		try {
-        		// ¿¬°á È®ÀÎ¿ë
-			System.out.println("¼­¹ö : " + socket.getInetAddress() 
-            						+ " IPÀÇ Å¬¶óÀÌ¾ğÆ®¿Í ¿¬°áµÇ¾ú½À´Ï´Ù");
-			
-			// InputStream - Å¬¶óÀÌ¾ğÆ®¿¡¼­ º¸³½ ¸Ş¼¼Áö ÀĞ±â
-			InputStream input = socket.getInputStream(); // ¸Ç Ã³À½ ÀÌ¸§ ÀÔ·ÂÇÏ°Ô
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			
-			// OutputStream - ¼­¹ö¿¡¼­ Å¬¶óÀÌ¾ğÆ®·Î ¸Ş¼¼Áö º¸³»±â
-			OutputStream out = socket.getOutputStream();
-			PrintWriter writer = new PrintWriter(out, true);
-			
-			// Å¬¶óÀÌ¾ğÆ®¿¡°Ô ¿¬°áµÇ¾ú´Ù´Â ¸Ş¼¼Áö º¸³»±â
-			//writer.println("Connect success");
-		
-			String rName = null;
-			String category = null;
-			String building = null;
-			
-			Database DB = new Database();
-		
-			//String WhatToDo = "hasd";	
-			// String WhatToDo = reader.readLine(); // get input from GUI
-			
-			/*if(WhatToDo.equals("insertNew")) { // when users are give DB some new information.
-				writer.println("insert"); 
-				writer.println("rName : "); // writer Lines can be Deleted or be a GUI interface. 3 Questions.
-				rName = reader.readLine(); // get input from GUI
-				writer.println("Category : ");
-				category = reader.readLine(); // get input..
-				writer.println("building : ");
-				building = reader.readLine(); // get input..
-				
-				if(DB.setRoom(rName, category, building)) { // return 1 if success to insert.
-					writer.println("insert success");
-				}
-			}
-			else if(WhatToDo.equals("PathFind")) {
-				writer.println("PathFind"); 
-				// TODO GUI 
-			}*/
-             
-		} catch (Exception e) {
-		    e.printStackTrace(); // ¿¹¿ÜÃ³¸®
-		}    		
-    }
-
+			int socketPort = 1234; // ì†Œì¼“ í¬íŠ¸ ì„¤ì •
+            ServerSocket serverSocket = new ServerSocket(socketPort); // ì„œë²„ ì†Œì¼“ ë§Œë“¤ê¸°
+            // ì„œë²„ ì˜¤í”ˆ í™•ì¸ìš©
+            System.out.println("socket : " + socketPort + "ìœ¼ë¡œ ì„œë²„ê°€ ì—´ë ¸ìŠµë‹ˆë‹¤");
+	
+            // ì†Œì¼“ ì„œë²„ê°€ ì¢…ë£Œë  ë•Œê¹Œì§€ ë¬´í•œë£¨í”„ ìœ ì € ìˆ˜ë§Œí¼ ìŠ¤ë ˆë“œê°€ ìƒì„±ì´ ë¨.
+            while(true) {
+                Socket socketUser = serverSocket.accept(); // ì„œë²„ì— í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì‹œ
+                // Thread ì•ˆì— í´ë¼ì´ì–¸íŠ¸ ì •ë³´ë¥¼ ë‹´ì•„ì¤Œ
+                Thread thd = new Server_thread(socketUser);
+                thd.start(); // Thread ì‹œì‘
+            }                 
+        
+		} catch (IOException e) {
+			e.printStackTrace(); // ì˜ˆì™¸ì²˜ë¦¬
+		}
+	}
 }
-

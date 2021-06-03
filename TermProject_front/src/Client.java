@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class DB_client {
+public class Client {
 	static int exit = 0;
 	public static void main(String[] args) {
 		try {
@@ -19,7 +19,7 @@ public class DB_client {
 			
 			Database db = new Database();
 			
-			listen_thread t1 = new listen_thread(socket);
+			Client_thread t1 = new Client_thread(socket);
 			
 			t1.start(); // ListeningThread Start
 			
