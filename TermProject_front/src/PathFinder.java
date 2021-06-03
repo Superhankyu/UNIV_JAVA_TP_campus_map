@@ -154,6 +154,10 @@ public class PathFinder {
 	public List<Vertex> findShortestPath(Vertex source, Building target) {
 		this.computeShortestPaths(source);
 		List<Vertex> path = this.getShortestPathTo(target.vt);
+		for(Vertex vt : path) {
+			System.out.print("->" + vt.toString());
+		}
+		System.out.println();
 		return path;
 	}
 	
@@ -179,7 +183,10 @@ public class PathFinder {
 		}
 		
 		List<Vertex> path = this.getShortestPathTo(minVt);
-		
+		for(Vertex vt : path) {
+			System.out.print("->" + vt.toString());
+		}
+		System.out.println();
 		return path;
 	}
 	
