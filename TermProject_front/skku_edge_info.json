@@ -19,6 +19,7 @@
     {"name": "cross8", "adj": "researchBuilding2", "adj_dis": 146},
     {"name": "cross9", "adj": "researchBuilding2", "adj_dis": 75},
     {"name": "cross9", "adj": "researchBuilding1", "adj_dis": 75},
+    {"name": "cross10", "adj": "cross24", "adj_dis": 135},
     {"name": "cross12", "adj": "cross10", "adj_dis": 120},
     {"name": "cross12", "adj": "cross11", "adj_dis": 103},
     {"name": "cross12", "adj": "cross13", "adj_dis": 135},

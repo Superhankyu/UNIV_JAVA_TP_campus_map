@@ -30,7 +30,7 @@
     {"rName": "medicalCenter_femaleStudentLounge", "category": "femaleStudentLounge", "building": "medicalCenter"},
     {"rName": "pharmacy_femaleStudentLounge", "category": "femaleStudentLounge", "building": "pharmacy"},
     {"rName": "scienceHall2_femaleStudentLounge", "category": "femaleStudentLounge", "building": "scienceHall2"},
-    {"rName": "biotechnology_femaleStudentLounge", "category": "femaleStudentLounge", "building": "biotechnology"},
+    {"rName": "biotechnology_femaleStudentLounge", "category": "femaleStudentLounge", "building": "biotechnology61"},
     {"rName": "engineeringBuilding2_femaleStudentLounge", "category": "femaleStudentLounge", "building": "engineeringBuilding2-26"},
     {"rName": "studentHall_maleStudentLounge", "category": "maleStudentLounge", "building": "studentHall"},
     {"rName": "dormShin2_UndergroundConvenienceStore", "category": "convenienceStore", "building": "dormShin2"},

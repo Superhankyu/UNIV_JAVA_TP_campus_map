@@ -17,8 +17,8 @@ import org.json.JSONObject;
 public class PathFinder {
 	private static List<Vertex> vertexs = new ArrayList<Vertex>();
 	private static List<Building> buildings = new ArrayList<Building>();
-	private static boolean defaultDataSet = false;
 	private static List<Room> rooms = new ArrayList<Room>();
+	private boolean defaultDataSet = false;
 
 	public PathFinder(){
 		try {

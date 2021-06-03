@@ -22,6 +22,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 class MyFrame extends JFrame {
+	final int paint_offset_x = 8;
+	final int paint_offset_y = -8;
+	
 	JPanel panel;
 	PathFinder PathFinder = new PathFinder();
 	Database Database = new Database();
@@ -594,7 +597,11 @@ class MyFrame extends JFrame {
 				Stroke stroke = new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
 				g2.setStroke(stroke);
 				g2.setColor(Color.ORANGE);
-				Line2D line = new Line2D.Float(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
+				Line2D line = new Line2D.Float(
+						xPoints[i] + paint_offset_x,
+						yPoints[i] + paint_offset_y, 
+						xPoints[i+1] + paint_offset_x, 
+						yPoints[i+1] + paint_offset_y);
 				lineList.add(line);
 				g2.draw(line);
 			}
