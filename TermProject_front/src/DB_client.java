@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class DB_client {
+	static int exit = 0;
 	public static void main(String[] args) {
 		try {
 			Socket socket = null;
@@ -17,14 +18,26 @@ public class DB_client {
 			System.out.println("서버에 접속 성공!"); // 접속 확인용
 			
 			Database db = new Database();
-		
-            // 서버에서 보낸 메세지 읽는 Thread
+			
 			listen_thread t1 = new listen_thread(socket);
-			WritingThread t2 = new WritingThread(socket); // GUI Thread start.
-
+			
 			t1.start(); // ListeningThread Start
-			t2.start(); // WritingThread Start
-			// MyFrame mf = new MyFrame();
+			
+		
+			/*while(true) {
+				MyFrame.wait = 1;
+				MyFrame mf = new MyFrame();
+				
+				while(MyFrame.wait == 1) {
+					System.out.print("");
+						
+				}
+				
+				if(MyFrame.isfin == 1) {
+					break;
+				}
+			}*/
+		
 			
 		} catch (IOException e) {
 			e.printStackTrace(); // 예외처리
