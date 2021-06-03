@@ -25,7 +25,8 @@ class MyFrame extends JFrame {
 	JPanel panel;
 	PathFinder PathFinder = new PathFinder();
 	Database Database = new Database();
-
+	static int isfin = 0;
+	static int wait = 1;
 	//variables for function
 	boolean FINDPATH = false;
 	boolean FINDBUILD = false;
@@ -80,6 +81,7 @@ class MyFrame extends JFrame {
 	ArrayList<JButton> buttonList = new ArrayList<JButton>();
 	JPanel dbPanel;
 	Popup dbPopup;
+	int exit_ = 0;
 	
 	//variable for design
 	Color buttonC=new Color(136, 133, 164); //background color of button
@@ -527,10 +529,14 @@ class MyFrame extends JFrame {
 				});
 			}
 			else if(event.getSource() == startNew) { //TODO: clear All painting on the Frame
-				
+				isfin = 0;
+				wait = 0;
+				dispose();
 			}
 			else if(event.getSource() == exit) {
-				System.exit(0);
+				isfin = 1;
+				wait = 0;
+				dispose();
 			}
 		}
 	}
@@ -608,7 +614,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		MyFrame mf = new MyFrame();
+		//MyFrame mf = new MyFrame();
 		
 		try {
 			int socketPort = 1234; // 소켓 포트 설정

@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class WritingThread extends Thread { // 서버로 메세지 보내는 Thread
+public class WritingThread extends Thread { // if there are keyborad input.
 	Socket socket = null;
 	Scanner scanner = new Scanner(System.in); // 채팅용 Scanner
 	

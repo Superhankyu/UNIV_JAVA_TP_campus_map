@@ -21,19 +21,21 @@ public class listen_thread extends Thread { // 서버에서 보낸 메세지 읽는 Thread
 			InputStream input = socket.getInputStream();
           		// BufferedReader에 위 InputStream을 담아 사용
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			
 			System.out.println(reader.readLine()); 
-			String WhatToDo = reader.readLine();
 			
-			if(WhatToDo.equals("insert")) { // if user wants insert new information.
-				for(int i = 0; i<3; i++) {
-					System.out.println(reader.readLine()); // 3 questions at Server.java run();
-				}	
-				System.out.println(reader.readLine());
-			}
-			else if(WhatToDo.equals("PathFind")) { // if user wants path
-				// TODO GUI With Server.java run();
+			
+			while(true) {
 				
+				MyFrame.wait = 1;
+				MyFrame mf = new MyFrame();
+				
+				while(MyFrame.wait == 1) {
+					System.out.print("");
+				}
+				
+				if(MyFrame.isfin == 1) {
+					break;
+				}
 			}
 				
 		} catch (Exception e) {
