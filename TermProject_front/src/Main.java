@@ -52,7 +52,8 @@ class MyFrame extends JFrame {
 	JMenuItem addData;
 	JMenuItem eraseData;
 	JMenu menu4;
-	//JMenuItem clearAll;
+	
+	JMenuItem clearAll;
 	JMenuItem exit;
 	
 	//variable campus_img
@@ -154,11 +155,11 @@ class MyFrame extends JFrame {
 		menu3.add(eraseData);
 		
 		//[menu4_EXIT]
-		menu4 = new JMenu("EXIT");
+		menu4 = new JMenu("Clear or Exit");
 		menuBar.add(menu4);
 		exit = new JMenuItem("EXIT");
-		//clearAll = new JMenuItem("Clear All");
-		//menu4.add(clearAll);
+		clearAll = new JMenuItem("Clear All");
+		menu4.add(clearAll);
 		menu4.add(exit);
 		
 		TestListenr listener = new TestListenr();
@@ -173,7 +174,7 @@ class MyFrame extends JFrame {
 		addData.addActionListener(listener);
 		eraseData.addActionListener(listener);
 		exit.addActionListener(listener);
-		//clearAll.addActionListener(listener);
+		clearAll.addActionListener(listener);
 		
 		setJMenuBar(menuBar);
 	}
@@ -453,6 +454,10 @@ class MyFrame extends JFrame {
 				dbPanel.setPreferredSize(new Dimension(300, 130));
 				dbPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 				dbPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+				String title = "Add new Building";
+				Border b = BorderFactory.createTitledBorder(title);
+				dbPanel.setBorder(b);
 				JLabel rNameLabel = new JLabel("Roomname: ");
 				textField1 = new JTextField(18);
 				JLabel catLabel = new JLabel("Category:     ");
@@ -471,6 +476,7 @@ class MyFrame extends JFrame {
 				
 				dbPopup = pf.getPopup(label_img, dbPanel, 30, 80);
 				dbPopup.show();
+				DATABASE = false;
 				
 				sendButton.addActionListener(new ActionListener() {
 					@Override
@@ -481,11 +487,48 @@ class MyFrame extends JFrame {
 			        }
 				});
 			}
-			/*else if(event.getSource() == clearAll) { //TODO: clear All painting on the Frame
-				FINDPATH = false;
-				FINDBUILD = false;
+			else if(event.getSource() == eraseData) {
+				DATABASE = true;
+				dbPanel = new JPanel();
+				dbPanel.setPreferredSize(new Dimension(300, 130));
+				dbPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+				dbPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+				String title = "Erase Building";
+				Border b = BorderFactory.createTitledBorder(title);
+				dbPanel.setBorder(b);
+				JLabel rNameLabel = new JLabel("Roomname: ");
+				textField1 = new JTextField(18);
+				JLabel catLabel = new JLabel("Category:     ");
+				textField2 = new JTextField(18);
+				JLabel buildLabel = new JLabel("Building:       ");
+				textField3 = new JTextField(18);
+				sendButton = new RoundedButton("SEND");
+				
+				dbPanel.add(rNameLabel);
+				dbPanel.add(textField1);
+				dbPanel.add(catLabel);
+				dbPanel.add(textField2);
+				dbPanel.add(buildLabel);
+				dbPanel.add(textField3);
+				dbPanel.add(sendButton);
+				
+				dbPopup = pf.getPopup(label_img, dbPanel, 30, 80);
+				dbPopup.show();
 				DATABASE = false;
-			}*/
+				
+				sendButton.addActionListener(new ActionListener() {
+					@Override
+			        public void actionPerformed(ActionEvent e) {
+						getFieldText();
+						Database.eraseRoom(dbrName, dbCategory, dbbName);
+						dbPopup.hide();
+			        }
+				});
+			}
+			else if(event.getSource() == clearAll) { //TODO: clear All painting on the Frame
+				
+			}
 			else if(event.getSource() == exit) {
 				System.exit(0);
 			}
@@ -560,7 +603,6 @@ class MyFrame extends JFrame {
 	// ----------------------------------------------------------------------------------------
 	// submit Database class setRoom(String rName, String category, Building building) 
 }
-
 
 public class Main {
 
