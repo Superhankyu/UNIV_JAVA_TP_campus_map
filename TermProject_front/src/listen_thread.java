@@ -21,7 +21,7 @@ public class listen_thread extends Thread { // 서버에서 보낸 메세지 읽는 Thread
 			InputStream input = socket.getInputStream();
           		// BufferedReader에 위 InputStream을 담아 사용
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			System.out.println(reader.readLine()); 
+			//System.out.println(reader.readLine()); 
 			
 			
 			while(true) {

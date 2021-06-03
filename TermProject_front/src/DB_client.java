@@ -14,8 +14,8 @@ public class DB_client {
 		try {
 			Socket socket = null;
             		// 소켓 서버에 접속
-			socket = new Socket("192.168.219.100", 1234); // TEST -> LOCALHOST
-			System.out.println("서버에 접속 성공!"); // 접속 확인용
+			socket = new Socket("localhost", 1234); // TEST -> LOCALHOST
+			System.out.println("서버에 접속 성공! - " + socket.toString()); // 접속 확인용
 			
 			Database db = new Database();
 			

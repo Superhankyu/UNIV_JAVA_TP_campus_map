@@ -13,6 +13,41 @@ import java.util.ArrayList;
 
 public class Database {
 	// 모든 room 정보를 Database에서 가져와서 List로 형성
+	public List<Room> getRooms(){
+		
+		List<Room> rooms = new ArrayList<>();
+	
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javaPro", // This state can changed by Host's IP or DB_name, password, port ...
+					"root", "1234");
+			
+			Statement stmt = conn.createStatement();
+			ResultSet rset;
+			String sql;
+			
+			sql = "select * from room;"; // TODO FOR DETAILS
+			rset = stmt.executeQuery(sql);
+			
+			while(rset.next()) { 
+				Room temp = new Room();
+				temp.rName = rset.getString("rName");
+				temp.category = rset.getString("category");
+				temp.building = rset.getString("building"); // cannot apply type "building" should change this.
+				
+				rooms.add(temp);
+			}
+		}
+		catch(SQLException sqle) {
+			System.out.println("SQLException "+ sqle);
+		}
+		catch(Exception e) {
+			System.out.println("Exception "+ e);
+		}
+
+		return rooms;
+	}
+	
 	// rNamge, category building 입력시 그에 맞는 rooms return.
 	public List<Room> getRooms(String rName, String category, String building){
 		
@@ -59,7 +94,10 @@ public class Database {
 			Statement stmt = conn.createStatement();
 			String sql;	
 			
-			sql = "insert into room values('"+rName+"', '"+category+"', '"+building+"')"; // TODO FOR DETAILS
+			sql = "insert into room (" + 
+					"`rName`,\r\n" + 
+					"`category`,\r\n" + 
+					"`building`)values('"+rName+"', '"+category+"', '"+building+"')"; // TODO FOR DETAILS
 			
 			int updated = stmt.executeUpdate(sql); // return number of updated queries.
 			if(updated >= 1) {

@@ -89,26 +89,36 @@ public class PathFinder {
 
 	//Update room infos from db
 	public List<Room> updateRooms(){
-		try {
-			Path path = Paths.get("skku_room_info.json");
-			String data = Files.readString(path);				
-			JSONArray jArray = new JSONArray(data);
-			var leng = jArray.length();
-			for(int i = 0; i<leng; i++) {
-				JSONObject jObject = jArray.getJSONObject(i);
-				String rName = jObject.getString("rName");
-				String category = jObject.getString("category");
-				String building = jObject.getString("building");
-				
-				rooms.add(new Room(rName, category, building));
-			}
-			
-			return rooms;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Path path = Paths.get("skku_room_info.json");
+//			String data = Files.readString(path);				
+//			JSONArray jArray = new JSONArray(data);
+//			var leng = jArray.length();
+//			for(int i = 0; i<leng; i++) {
+//				JSONObject jObject = jArray.getJSONObject(i);
+//				String rName = jObject.getString("rName");
+//				String category = jObject.getString("category");
+//				String building = jObject.getString("building");
+//				
+//				//System.out.println("insert into room (`rName`,`category`,`building`)values('"+rName+"', '"+category+"', '"+building+"');");
+//				
+//				rooms.add(new Room(rName, category, building));
+//			}
+//			
+//			return rooms;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
-		return null;
+		Database db = new Database();
+		rooms = db.getRooms();
+		
+		System.out.println(rooms.size());
+		
+		if(rooms != null)
+			return rooms;
+		else
+			return null;
 	}
 	
 	// When finding user position
