@@ -465,7 +465,7 @@ public class MyFrame extends JFrame {
 			else if(event.getSource() == addData) {
 				DATABASE = true;
 				dbPanel = new JPanel();
-				dbPanel.setPreferredSize(new Dimension(300, 130));
+				dbPanel.setPreferredSize(new Dimension(300, 140));
 				dbPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 				dbPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -507,7 +507,7 @@ public class MyFrame extends JFrame {
 			else if(event.getSource() == eraseData) {
 				DATABASE = true;
 				dbPanel = new JPanel();
-				dbPanel.setPreferredSize(new Dimension(300, 130));
+				dbPanel.setPreferredSize(new Dimension(300, 140));
 				dbPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 				dbPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
