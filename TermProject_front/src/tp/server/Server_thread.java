@@ -1,4 +1,8 @@
+package tp.server;
+
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,11 +13,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Server_thread extends Thread{
+public class Server_thread implements Runnable {
 	static String building_number;
 	static Double xposition;
 	static ArrayList<Socket> list = new ArrayList<Socket>(); // 유저 확인용
-	static Socket socket = null;
+	Socket socket = null;
 	
 	public Server_thread(Socket socket) {
 		this.socket = socket; // 유저 socket을 할당
@@ -26,21 +30,42 @@ public class Server_thread extends Thread{
             						+ " IP의 클라이언트와 연결되었습니다");
 			
 			// InputStream - 클라이언트에서 보낸 메세지 읽기
-			InputStream input = socket.getInputStream(); // 맨 처음 이름 입력하게
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+//			InputStream input = socket.getInputStream(); // 맨 처음 이름 입력하게
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			
 			// OutputStream - 서버에서 클라이언트로 메세지 보내기
-			OutputStream out = socket.getOutputStream();
-			PrintWriter writer = new PrintWriter(out, true);
+//			OutputStream out = socket.getOutputStream();
+//			PrintWriter writer = new PrintWriter(out, true);
 			
-			// 클라이언트에게 연결되었다는 메세지 보내기
-			//writer.println("Connect success");
-		
-			String rName = null;
-			String category = null;
-			String building = null;
+			InputStream is = socket.getInputStream();
+			DataInputStream dis = new DataInputStream (is);
+			OutputStream os = socket.getOutputStream ();
+			DataOutputStream dos = new DataOutputStream (os);
 			
-			Database DB = new Database();
+			Database db = new Database();
+			
+			while(true) {
+				while(!dis.readUTF().equals("ready")) {}
+
+				var action = dis.readUTF();
+				if(action.equals("update")) {
+					dos.writeUTF("update ready");
+					List<String> room_datas = db.getRooms();
+					for(String data : room_datas) {
+						dos.writeUTF(data);
+					}
+				}
+				else if(action.equals("set")) {
+					var data = dis.readUTF();
+					db.setRoom(data.split(":")[0], data.split(":")[1], data.split(":")[2]);
+				}
+				else if(action.equals("erase")) {
+					var data = dis.readUTF();
+					db.eraseRoom(data.split(":")[0], data.split(":")[1], data.split(":")[2]);
+				}
+				
+				dos.writeUTF("done");
+			}
 		
 			//String WhatToDo = "hasd";	
 			// String WhatToDo = reader.readLine(); // get input from GUI

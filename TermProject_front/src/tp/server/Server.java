@@ -1,3 +1,5 @@
+package tp.server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +18,8 @@ public class Server {
             while(true) {
                 Socket socketUser = serverSocket.accept(); // 서버에 클라이언트 접속 시
                 // Thread 안에 클라이언트 정보를 담아줌
-                Thread thd = new Server_thread(socketUser);
+                Server_thread sthd = new Server_thread(socketUser);
+                Thread thd = new Thread(sthd);
                 thd.start(); // Thread 시작
             }                 
         

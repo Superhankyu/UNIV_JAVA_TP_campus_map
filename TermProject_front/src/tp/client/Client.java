@@ -1,4 +1,6 @@
+package tp.client;
 
+//import tp.server.Database;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,13 +19,19 @@ public class Client {
 			socket = new Socket("localhost", 1234); // TEST -> LOCALHOST
 			System.out.println("서버에 접속 성공! - " + socket.toString()); // 접속 확인용
 			
-			Database db = new Database();
-			
-			Client_thread t1 = new Client_thread(socket);
-			
-			t1.start(); // ListeningThread Start
-			
 		
+			while(true) {
+				MyFrame.wait = 1;
+				MyFrame mf = new MyFrame(socket);
+				
+				while(MyFrame.wait == 1) {
+					System.out.print("");
+				}
+				
+				if(MyFrame.isfin == 1) {
+					break;
+				}
+			}
 			/*while(true) {
 				MyFrame.wait = 1;
 				MyFrame mf = new MyFrame();

@@ -1,3 +1,8 @@
+package tp.client;
+
+import tp.common.*;
+//import tp.server.Database;
+
 import java.awt.*;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -12,13 +17,14 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import java.net.Socket;
+
 public class MyFrame extends JFrame {
 	final int paint_offset_x = 8;
 	final int paint_offset_y = -8;
 	
 	JPanel panel;
-	PathFinder PathFinder = new PathFinder();
-	Database Database = new Database();
+	PathFinder PathFinder = null;
 	static int isfin = 0;
 	static int wait = 1;
 	//variables for function
@@ -56,7 +62,7 @@ public class MyFrame extends JFrame {
 	
 	//variable userPosition & targetPosition & PathPosition
 	Position myPos = new Position(0, 0);
-	List<Building> buildings = PathFinder.getAllBuildingInfos();
+	List<Building> buildings = null;
 	String category;
 	List<Vertex> path = new ArrayList<Vertex>();
 	
@@ -81,7 +87,13 @@ public class MyFrame extends JFrame {
 	Color buttonC=new Color(136, 133, 164); //background color of button
 	List<Line2D> lineList = new ArrayList<Line2D>();
 	
-	MyFrame() {
+	Socket socket = null;
+	
+	MyFrame(Socket socket) {
+		this.socket = socket;
+		this.PathFinder = new PathFinder(socket);
+		this.buildings =  PathFinder.getAllBuildingInfos();
+		
 		//setLayout(null);
 		CreateMenu();
 		
@@ -478,7 +490,10 @@ public class MyFrame extends JFrame {
 					@Override
 			        public void actionPerformed(ActionEvent e) {
 						getFieldText();
-						Database.setRoom(dbrName, dbCategory, dbbName);
+						DB_client_thread dct = new DB_client_thread(socket, "set", new Room(dbrName, dbCategory, dbbName));
+						Thread thread = new Thread(dct);
+						thread.start();
+						//Database.setRoom(dbrName, dbCategory, dbbName);
 						dbPopup.hide();
 			        }
 				});
@@ -517,7 +532,10 @@ public class MyFrame extends JFrame {
 					@Override
 			        public void actionPerformed(ActionEvent e) {
 						getFieldText();
-						Database.eraseRoom(dbrName, dbCategory, dbbName);
+						DB_client_thread dct = new DB_client_thread(socket, "erase", new Room(dbrName, dbCategory, dbbName));
+						Thread thread = new Thread(dct);
+						thread.start();
+						//Database.eraseRoom(dbrName, dbCategory, dbbName);
 						dbPopup.hide();
 			        }
 				});

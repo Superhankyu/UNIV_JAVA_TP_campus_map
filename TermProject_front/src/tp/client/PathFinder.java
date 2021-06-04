@@ -1,3 +1,8 @@
+package tp.client;
+
+import tp.common.*;
+//import tp.server.Database;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,13 +19,18 @@ import java.lang.Math;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.Socket;
+
 public class PathFinder {
 	private static List<Vertex> vertexs = new ArrayList<Vertex>();
 	private static List<Building> buildings = new ArrayList<Building>();
 	private static List<Room> rooms = new ArrayList<Room>();
 	private boolean defaultDataSet = false;
+	private Socket socket = null;
+	
 
-	public PathFinder(){
+	public PathFinder(Socket socket){
+		this.socket = socket;
 		try {
 			if(!defaultDataSet){
 				// vertex read
@@ -110,15 +120,27 @@ public class PathFinder {
 //			e.printStackTrace();
 //		}
 		
-		Database db = new Database();
-		rooms = db.getRooms();
+//		Database db = new Database();
+//		rooms = db.getRooms();
 		
-		System.out.println(rooms.size());
+		try {
+			DB_client_thread dct = new DB_client_thread(socket, "update");
+			Thread thread = new Thread(dct);
+			thread.start();
+			thread.join();
+			
+			rooms = dct.getRooms();
+			
+			System.out.println(rooms.size());
+			
+			if(rooms != null)
+				return rooms;
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
-		if(rooms != null)
-			return rooms;
-		else
-			return null;
+		return null;
 	}
 	
 	// When finding user position
