@@ -3,6 +3,7 @@ package tp.client;
 //import tp.server.Database;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +20,8 @@ public class Client {
 			socket = new Socket("localhost", 1234); // TEST -> LOCALHOST
 			System.out.println("서버에 접속 성공! - " + socket.toString()); // 접속 확인용
 			
+			OutputStream os = socket.getOutputStream ();
+			DataOutputStream dos = new DataOutputStream (os);
 		
 			while(true) {
 				MyFrame.wait = 1;
@@ -46,7 +49,10 @@ public class Client {
 				}
 			}*/
 		
+			dos.writeUTF("ready");
+			dos.writeUTF("finish");
 			
+			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace(); // 예외처리
 		}

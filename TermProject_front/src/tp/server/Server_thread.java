@@ -63,6 +63,9 @@ public class Server_thread implements Runnable {
 					var data = dis.readUTF();
 					db.eraseRoom(data.split(":")[0], data.split(":")[1], data.split(":")[2]);
 				}
+				else if(action.equals("finish")) {
+					break;
+				}
 				
 				dos.writeUTF("done");
 			}
