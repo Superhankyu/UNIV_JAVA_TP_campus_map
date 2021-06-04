@@ -1,3 +1,5 @@
+package tp.common;
+
 public class Building {
 	public String bName;
 	public int openTime;

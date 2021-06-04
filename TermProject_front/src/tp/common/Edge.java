@@ -1,3 +1,5 @@
+package tp.common;
+
 public class Edge {
  
     private double weight;

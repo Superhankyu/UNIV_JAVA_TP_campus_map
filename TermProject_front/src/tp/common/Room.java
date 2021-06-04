@@ -1,3 +1,4 @@
+package tp.common;
 
 public class Room {
 	public String rName;

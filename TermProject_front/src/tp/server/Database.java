@@ -1,3 +1,7 @@
+package tp.server;
+
+import tp.common.*;
+
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +17,44 @@ import java.util.ArrayList;
 
 public class Database {
 	// 모든 room 정보를 Database에서 가져와서 List로 형성
-	public List<Room> getRooms(){
+//	public List<Room> getRooms(){
+//		
+//		List<Room> rooms = new ArrayList<>();
+//	
+//		try {
+//			Class.forName("com.mysql.cj.jdbc.Driver");
+//			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javaPro", // This state can changed by Host's IP or DB_name, password, port ...
+//					"root", "1234");
+//			
+//			Statement stmt = conn.createStatement();
+//			ResultSet rset;
+//			String sql;
+//			
+//			sql = "select * from room;"; // TODO FOR DETAILS
+//			rset = stmt.executeQuery(sql);
+//			
+//			while(rset.next()) { 
+//				Room temp = new Room();
+//				temp.rName = rset.getString("rName");
+//				temp.category = rset.getString("category");
+//				temp.building = rset.getString("building"); // cannot apply type "building" should change this.
+//				
+//				rooms.add(temp);
+//			}
+//		}
+//		catch(SQLException sqle) {
+//			System.out.println("SQLException "+ sqle);
+//		}
+//		catch(Exception e) {
+//			System.out.println("Exception "+ e);
+//		}
+//
+//		return rooms;
+//	}
+	
+	public List<String> getRooms(){
 		
-		List<Room> rooms = new ArrayList<>();
+		List<String> datas = new ArrayList<>();
 	
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -30,12 +69,16 @@ public class Database {
 			rset = stmt.executeQuery(sql);
 			
 			while(rset.next()) { 
-				Room temp = new Room();
-				temp.rName = rset.getString("rName");
-				temp.category = rset.getString("category");
-				temp.building = rset.getString("building"); // cannot apply type "building" should change this.
+//				Room temp = new Room();
+//				temp.rName = rset.getString("rName");
+//				temp.category = rset.getString("category");
+//				temp.building = rset.getString("building"); // cannot apply type "building" should change this.
 				
-				rooms.add(temp);
+				datas.add(
+						rset.getString("rName") + ":" +
+						rset.getString("category") + ":" +
+						rset.getString("building")
+						);
 			}
 		}
 		catch(SQLException sqle) {
@@ -45,7 +88,7 @@ public class Database {
 			System.out.println("Exception "+ e);
 		}
 
-		return rooms;
+		return datas;
 	}
 	
 	// rNamge, category building 입력시 그에 맞는 rooms return.
