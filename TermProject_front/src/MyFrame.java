@@ -624,7 +624,7 @@ public class MyFrame extends JFrame {
 						yPoints[i+1] + paint_offset_y);
 				lineList.add(line);
 				g2.draw(line);
-				g2.drawLine(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
+				//g2.drawLine(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
 			}
 		}
 	}
