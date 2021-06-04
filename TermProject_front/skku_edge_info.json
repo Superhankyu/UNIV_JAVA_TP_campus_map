@@ -9,7 +9,6 @@
     {"name": "cross3", "adj": "dormYeah", "adj_dis": 130},
     {"name": "cross4", "adj": "biotechnology61", "adj_dis": 90},
     {"name": "cross4", "adj": "scienceHall2", "adj_dis": 185},
-    {"name": "cross5", "adj": "cross6", "adj_dis": 117},
     {"name": "cross5", "adj": "scienceHall2", "adj_dis": 124},
     {"name": "cross6", "adj": "cross7", "adj_dis": 150},
     {"name": "cross7", "adj": "engineeringPracticeBuildingA", "adj_dis": 50},
