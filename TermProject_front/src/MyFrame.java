@@ -80,6 +80,12 @@ public class MyFrame extends JFrame {
 	//variable for design
 	Color buttonC=new Color(136, 133, 164); //background color of button
 	List<Line2D> lineList = new ArrayList<Line2D>();
+
+	//variable for timer
+	Timer t = new Timer(100, new action());
+	int elapsedTime = 0;
+	int maxtime = 200;
+	int timerDelay = 100;
 	
 	MyFrame() {
 		//setLayout(null);
@@ -545,6 +551,28 @@ public class MyFrame extends JFrame {
 			xPoints[i] = path.get(i).pos.x + 90;
 			yPoints[i] = path.get(i).pos.y + 80;
 		}
+		ImageIcon icon = new ImageIcon("chooseplace.png");
+		Image img = icon.getImage();
+		Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon = new ImageIcon(changeimg);
+		JButton button_place = new JButton(changeIcon);
+		button_place.setSize(8, 8);
+		button_place.setBorderPainted(false);
+		button_place.setBorder(null);
+		button_place.setBackground(getBackground());
+		//button.setFocusable(false);
+		button_place.setMargin(new Insets(0, 0, 0, 0));
+		button_place.setContentAreaFilled(false);
+		ImageIcon icon2 = new ImageIcon("chooseplace.png");
+		Image img2 = icon2.getImage();
+		Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
+		ImageIcon changeIcon2 = new ImageIcon(changeimg2);
+		button_place.setRolloverIcon(changeIcon2);
+		button_place.setPressedIcon(changeIcon2);
+		button_place.setDisabledIcon(changeIcon2);
+		Popup buildPopup = pf.getPopup(label_img, button_place, xPoints[path.size()-1]-10, yPoints[path.size()-1]-40);
+		buildPopup.show();
+		t.start();
 	}
 	
 	private void findBuilding() {
@@ -577,6 +605,7 @@ public class MyFrame extends JFrame {
 		button_place.setDisabledIcon(changeIcon2);
 		Popup buildPopup = pf.getPopup(label_img, button_place, xPoints[path.size()-1]-10, yPoints[path.size()-1]-40);
 		buildPopup.show();
+		t.start();
 	}
 	
 	@Override
@@ -595,9 +624,21 @@ public class MyFrame extends JFrame {
 						yPoints[i+1] + paint_offset_y);
 				lineList.add(line);
 				g2.draw(line);
+				g2.drawLine(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
 			}
 		}
 	}
+
+	class action implements ActionListener{
+        public void actionPerformed(ActionEvent e) {   
+        	elapsedTime += timerDelay;
+            repaint();
+            if (elapsedTime >= maxtime) {
+            	Timer s = (Timer)e.getSource();
+            	s.stop();
+            }
+        }       
+    }
 	
 	// PathFinder
 	// findClosestVertex  Vertex
