@@ -590,6 +590,17 @@ public class MyFrame extends JFrame {
 		button_place.setDisabledIcon(changeIcon2);
 		Popup buildPopup = pf.getPopup(label_img, button_place, xPoints[path.size()-1]-10, yPoints[path.size()-1]-40);
 		buildPopup.show();
+		
+		tarlocLabel = new JLabel("Found path to the "+ tarBuild.bName + "!",JLabel.CENTER);
+		tarlocLabel.setOpaque(true);
+		tarlocLabel.setPreferredSize(new Dimension(230, 70));
+		tarlocLabel.setForeground(Color.BLUE);
+		EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+		tarlocLabel.setBorder(etborder);
+		tarlocPopup= pf.getPopup(label_img, tarlocLabel, 30, 80);
+				
+		tarlocPopup.show();
+		
 		t.start();
 	}
 	
@@ -623,6 +634,17 @@ public class MyFrame extends JFrame {
 		button_place.setDisabledIcon(changeIcon2);
 		Popup buildPopup = pf.getPopup(label_img, button_place, xPoints[path.size()-1]-10, yPoints[path.size()-1]-40);
 		buildPopup.show();
+		
+		tarlocLabel = new JLabel("Found path to closest "+ category + "!",JLabel.CENTER);
+		tarlocLabel.setOpaque(true);
+		tarlocLabel.setPreferredSize(new Dimension(240, 70));
+		tarlocLabel.setForeground(Color.BLUE);
+		EtchedBorder etborder = new EtchedBorder(EtchedBorder.RAISED);
+		tarlocLabel.setBorder(etborder);
+		tarlocPopup= pf.getPopup(label_img, tarlocLabel, 30, 80);
+				
+		tarlocPopup.show();
+		
 		t.start();
 	}
 	
