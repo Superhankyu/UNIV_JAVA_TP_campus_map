@@ -34,7 +34,7 @@ public class PathFinder {
 		try {
 			if(!defaultDataSet){
 				// vertex read
-				Path path = Paths.get("skku_vertex_info.json");
+				Path path = Paths.get("tp/client/skku_vertex_info.json");
 				String data = Files.readString(path);				
 				JSONArray jArray = new JSONArray(data);
 				var leng = jArray.length();
@@ -47,7 +47,7 @@ public class PathFinder {
 				}
 
 				// add edges
-				path = Paths.get("skku_edge_info.json");
+				path = Paths.get("tp/client/skku_edge_info.json");
 				data = Files.readString(path);				
 				jArray = new JSONArray(data);
 				leng = jArray.length();
@@ -67,7 +67,7 @@ public class PathFinder {
 				}
 
 				// add buildings
-				path = Paths.get("skku_building_info.json");
+				path = Paths.get("tp/client/skku_building_info.json");
 				data = Files.readString(path);				
 				jArray = new JSONArray(data);
 				leng = jArray.length();

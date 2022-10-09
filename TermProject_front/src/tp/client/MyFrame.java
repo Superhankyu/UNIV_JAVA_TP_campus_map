@@ -110,7 +110,7 @@ public class MyFrame extends JFrame {
 		
 		label_img = new JLabel();
 
-		ImageIcon icon = new ImageIcon("campus.jpg");
+		ImageIcon icon = new ImageIcon("tp/client/campus.jpg");
 		Image img = icon.getImage();
 		Image changeimg = img.getScaledInstance(600, 480, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon = new ImageIcon(changeimg);
@@ -195,7 +195,7 @@ public class MyFrame extends JFrame {
 	
 	private ArrayList <JButton> CreateBuildPopup(){
 		for(int i = 0; i < buildings.size(); i++) {
-			ImageIcon icon = new ImageIcon("place.png");
+			ImageIcon icon = new ImageIcon("tp/client/place.png");
 			Image img = icon.getImage();
 			Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 			ImageIcon changeIcon = new ImageIcon(changeimg);
@@ -206,7 +206,7 @@ public class MyFrame extends JFrame {
 			//button.setFocusable(false);
 			button_place.setMargin(new Insets(0, 0, 0, 0));
 			button_place.setContentAreaFilled(false);
-			ImageIcon icon2 = new ImageIcon("chooseplace.png");
+			ImageIcon icon2 = new ImageIcon("tp/client/chooseplace.png");
 			Image img2 = icon2.getImage();
 			Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 			ImageIcon changeIcon2 = new ImageIcon(changeimg2);
@@ -569,7 +569,7 @@ public class MyFrame extends JFrame {
 			xPoints[i] = path.get(i).pos.x + 90;
 			yPoints[i] = path.get(i).pos.y + 80;
 		}
-		ImageIcon icon = new ImageIcon("chooseplace.png");
+		ImageIcon icon = new ImageIcon("tp/client/chooseplace.png");
 		Image img = icon.getImage();
 		Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon = new ImageIcon(changeimg);
@@ -581,7 +581,7 @@ public class MyFrame extends JFrame {
 		//button.setFocusable(false);
 		button_place.setMargin(new Insets(0, 0, 0, 0));
 		button_place.setContentAreaFilled(false);
-		ImageIcon icon2 = new ImageIcon("chooseplace.png");
+		ImageIcon icon2 = new ImageIcon("tp/client/chooseplace.png");
 		Image img2 = icon2.getImage();
 		Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon2 = new ImageIcon(changeimg2);
@@ -613,7 +613,7 @@ public class MyFrame extends JFrame {
 			xPoints[i] = path.get(i).pos.x + 90;
 			yPoints[i] = path.get(i).pos.y + 80;
 		}
-		ImageIcon icon = new ImageIcon("chooseplace.png");
+		ImageIcon icon = new ImageIcon("tp/client/chooseplace.png");
 		Image img = icon.getImage();
 		Image changeimg = img.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon = new ImageIcon(changeimg);
@@ -625,7 +625,7 @@ public class MyFrame extends JFrame {
 		//button.setFocusable(false);
 		button_place.setMargin(new Insets(0, 0, 0, 0));
 		button_place.setContentAreaFilled(false);
-		ImageIcon icon2 = new ImageIcon("chooseplace.png");
+		ImageIcon icon2 = new ImageIcon("tp/client/chooseplace.png");
 		Image img2 = icon2.getImage();
 		Image changeimg2 = img2.getScaledInstance(20, 25, Image.SCALE_SMOOTH);
 		ImageIcon changeIcon2 = new ImageIcon(changeimg2);
